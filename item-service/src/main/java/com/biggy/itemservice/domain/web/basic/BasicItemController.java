@@ -70,12 +70,20 @@ public class BasicItemController {
   }
 
   // 이름도 생략하고 model도 생략할 수 있다!!!
-  @PostMapping("/add")
+  @PostMapping("/v3/add")
   public String addItemV3(@ModelAttribute Item item) {
 
     itemRepository.save(item);
 
     return "basic/item";
+  }
+
+  @PostMapping("/add")
+  public String addItemV4(@ModelAttribute Item item) {
+
+    itemRepository.save(item);
+
+    return "redirect:/basic/items/" + item.getId();
   }
 
   @GetMapping("/{itemId}/edit")
