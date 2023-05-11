@@ -9,7 +9,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 //스프링 부트 외부 라이브러리 버전 변경
-//ext['tomcat.version']='10.1.4'
+ext['tomcat.version']='10.1.4'
 
 configurations {
     compileOnly {
@@ -23,28 +23,10 @@ repositories {
 
 
 dependencies {
-
-    //2. 스프링 부트 라이브러리 버전 관리
-    //스프링 웹, MVC
-    implementation 'org.springframework:spring-webmvc'
-    //내장 톰캣
-    implementation 'org.apache.tomcat.embed:tomcat-embed-core'
-    //JSON 처리
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
-    //스프링 부트 관련
-    implementation 'org.springframework.boot:spring-boot'
-    implementation 'org.springframework.boot:spring-boot-autoconfigure'
-    //LOG 관련
-    implementation 'ch.qos.logback:logback-classic'
-    implementation 'org.apache.logging.log4j:log4j-to-slf4j'
-    implementation 'org.slf4j:jul-to-slf4j'
-    //YML 관련
-    implementation 'org.yaml:snakeyaml'
-
-/*
     //3. 스프링 부트 스타터
+    // 이 라이브러리 하나로 주요한 라이브러리를 한 번에 가져올 수 있다.
+    // MVC, Embed Tomcat, JSON Library, Log, YAML, Spring Boot Library, etc...
     implementation 'org.springframework.boot:spring-boot-starter-web'
-*/
 }
 
 tasks.named('test') {
