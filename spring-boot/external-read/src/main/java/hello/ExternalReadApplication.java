@@ -15,9 +15,9 @@ import org.springframework.context.annotation.Import;
 //@Import(MyDataSourceConfigV1.class)
 //@Import(MyDataSourceConfigV2.class)
 @Import(MyDataSourceConfigV3.class)
-@SpringBootApplication(scanBasePackages = "hello.datasource")
+@SpringBootApplication(scanBasePackages = {"hello.datasource", "hello.pay"})
 //@ConfigurationPropertiesScan // @ConfigurationProperties 전체 스캔 => @EnableConfigurationProperties 대체
-@ConfigurationPropertiesScan({"hello"}) // 패키지 지정 가능
+//@ConfigurationPropertiesScan({"hello"}) // 패키지 지정 가능
 public class ExternalReadApplication {
 
     public static void main(String[] args) {

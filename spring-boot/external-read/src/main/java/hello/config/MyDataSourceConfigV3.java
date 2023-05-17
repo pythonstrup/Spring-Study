@@ -7,8 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-// @ConfigurationPropertiesScan 덕분에 없어도 됨
-//@EnableConfigurationProperties(MyDataSourcePropertiesV3.class)
+// @ConfigurationPropertiesScan이 있으면 없어도 된다.
+@EnableConfigurationProperties(MyDataSourcePropertiesV3.class)
 @Slf4j
 public class MyDataSourceConfigV3 {
 
