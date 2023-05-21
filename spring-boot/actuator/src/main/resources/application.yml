@@ -7,6 +7,9 @@ management:
     env:
       enabled: true
 
+  server:
+    port: 8080
+
   endpoint:
     shutdown:
       enabled: true
@@ -14,11 +17,13 @@ management:
       show-components: always
   #      show-details: always
 
+
   endpoints:
     web:
       exposure:
         include: "*"
 #        exclude: "env,beans"
+      base-path: "/manage"
 
 info:
   app:
