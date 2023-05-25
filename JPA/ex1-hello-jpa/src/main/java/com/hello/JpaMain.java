@@ -17,17 +17,19 @@ public class JpaMain {
     tx.begin();
 
     try {
-      // 비영속
-      Member member = new Member();
-      member.setId(100L);
-      member.setName("HelloJPA");
+      // 결과적으로 쿼리는 1번 나간다.
+//      Member findMember1 = em.find(Member.class, 101L);
+//      Member findMember2 = em.find(Member.class, 101L); // 1차 캐시로 가지고 온다.
+//      System.out.println("result = " + (findMember1 == findMember2));
 
-      // 영속
-      System.out.println("===BEFORE===");
-      em.persist(member);
-      // em.detach(member); // 영속에서 분리 -> 준영속 상태
-      // em.remove(member); // 객체를 삭제한 상태
-      System.out.println("===AFTER===");
+//      Member member1 = new Member(150L, "A");
+//      Member member2 = new Member(160L, "B");
+//      em.persist(member1);
+//      em.persist(member2);
+
+      Member member = em.find(Member.class, 150L);
+      member.setName("ZZZZZZZ");
+      System.out.println("=======================");
 
       tx.commit();
     } catch (Exception e) {
@@ -39,14 +41,8 @@ public class JpaMain {
     emf.close();
   }
 
-  private void basic() {
-    EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
-
-    EntityManager em = emf.createEntityManager();
-
-    EntityTransaction tx = em.getTransaction();
+  private void basic(EntityManagerFactory emf, EntityManager em, EntityTransaction tx) {
     tx.begin();
-
     try {
       // save
 //      Member member = new Member();
@@ -76,6 +72,36 @@ public class JpaMain {
       em.close();
     }
 
+    emf.close();
+  }
+
+  public static void persist1(EntityManagerFactory emf, EntityManager em, EntityTransaction tx) {
+    tx.begin();
+    try {
+      // 비영속
+      Member member = new Member();
+      member.setId(101L);
+      member.setName("HelloJPA");
+
+      // 영속
+      System.out.println("===BEFORE===");
+      em.persist(member);
+      // em.detach(member); // 영속에서 분리 -> 준영속 상태
+      // em.remove(member); // 객체를 삭제한 상태
+      System.out.println("===AFTER===");
+
+      // 조회를 하는데, select 쿼리를 날리지 않는다!! => 1차 캐시를 먼저 조회하기 때문이다.
+      Member findMember = em.find(Member.class, 101L);
+
+      System.out.println("findMember.id = " + findMember.getId());
+      System.out.println("findMember.name = " + findMember.getName());
+
+      tx.commit();
+    } catch (Exception e) {
+      tx.rollback();
+    } finally {
+      em.close();
+    }
     emf.close();
   }
 }
