@@ -17,11 +17,14 @@ public class JpaMain {
     tx.begin();
 
     try {
-      Member member = new Member(200L, "member200");
-      em.persist(member);
+      Member member1 = em.find(Member.class, 150L);
+      member1.setName("AAAAAAAA");
 
-      em.flush(); // 쿼리가 즉시 실행된다.
-      // 영속성 컨텍스트를 비우는 게 아니라, 변경내용을 데이터베이스에 동기화하는 작업이다.
+      // em.detach(member1); // 특정 엔티티만 준영속 상태로 전환한다.
+      em.clear(); // 영속성 컨텍스트를 통으로 다 지워버린다. 그러므로 1차 캐시가 작동하지 않고 다시 select하게 된다.
+      // em.close(); // 영속성 컨텍스트를 아예 닫아버린다.
+
+      Member member2 = em.find(Member.class, 150L);
 
       System.out.println("===========================");
 
@@ -35,7 +38,7 @@ public class JpaMain {
     emf.close();
   }
 
-  private void basic(EntityManagerFactory emf, EntityManager em, EntityTransaction tx) {
+  private void basic(EntityManager em) {
     // save
 //      Member member = new Member();
 //      member.setId(3L);
@@ -56,11 +59,9 @@ public class JpaMain {
     for (Member member : resultList) {
       System.out.println("member.name = " + member.getName());
     }
-
-    tx.commit();
   }
 
-  public static void persist1(EntityManagerFactory emf, EntityManager em, EntityTransaction tx) {
+  private void persist1(EntityManager em) {
     // 비영속
     Member member = new Member();
     member.setId(101L);
@@ -78,11 +79,9 @@ public class JpaMain {
 
     System.out.println("findMember.id = " + findMember.getId());
     System.out.println("findMember.name = " + findMember.getName());
-
-    tx.commit();
   }
 
-  public static void persist2(EntityManagerFactory emf, EntityManager em, EntityTransaction tx) {
+  private void persist2(EntityManager em) {
     // 결과적으로 쿼리는 1번 나간다.
 //      Member findMember1 = em.find(Member.class, 101L);
 //      Member findMember2 = em.find(Member.class, 101L); // 1차 캐시로 가지고 온다.
@@ -96,7 +95,28 @@ public class JpaMain {
     Member member = em.find(Member.class, 150L);
     member.setName("ZZZZZZZ");
     System.out.println("=======================");
+  }
 
-    tx.commit();
+  private void flush(EntityManager em) {
+    Member member = new Member(200L, "member200");
+    em.persist(member);
+
+    em.flush(); // 쿼리가 즉시 실행된다.
+    // 영속성 컨텍스트를 비우는 게 아니라, 변경내용을 데이터베이스에 동기화하는 작업이다.
+
+    System.out.println("===========================");
+  }
+
+  private void semiPersistence(EntityManager em) {
+    Member member1 = em.find(Member.class, 150L);
+    member1.setName("AAAAAAAA");
+
+    // em.detach(member1); // 특정 엔티티만 준영속 상태로 전환한다.
+    em.clear(); // 영속성 컨텍스트를 통으로 다 지워버린다. 그러므로 1차 캐시가 작동하지 않고 다시 select하게 된다.
+    // em.close(); // 영속성 컨텍스트를 아예 닫아버린다.
+
+    Member member2 = em.find(Member.class, 150L);
+
+    System.out.println("===========================");
   }
 }
