@@ -17,6 +17,37 @@ public class JpaMain {
     tx.begin();
 
     try {
+      // 비영속
+      Member member = new Member();
+      member.setId(100L);
+      member.setName("HelloJPA");
+
+      // 영속
+      System.out.println("===BEFORE===");
+      em.persist(member);
+      // em.detach(member); // 영속에서 분리 -> 준영속 상태
+      // em.remove(member); // 객체를 삭제한 상태
+      System.out.println("===AFTER===");
+
+      tx.commit();
+    } catch (Exception e) {
+      tx.rollback();
+    } finally {
+      em.close();
+    }
+
+    emf.close();
+  }
+
+  private void basic() {
+    EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
+
+    EntityManager em = emf.createEntityManager();
+
+    EntityTransaction tx = em.getTransaction();
+    tx.begin();
+
+    try {
       // save
 //      Member member = new Member();
 //      member.setId(3L);
