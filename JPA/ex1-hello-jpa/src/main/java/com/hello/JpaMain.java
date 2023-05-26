@@ -17,14 +17,7 @@ public class JpaMain {
     tx.begin();
 
     try {
-      Member member1 = em.find(Member.class, 150L);
-      member1.setName("AAAAAAAA");
 
-      // em.detach(member1); // 특정 엔티티만 준영속 상태로 전환한다.
-      em.clear(); // 영속성 컨텍스트를 통으로 다 지워버린다. 그러므로 1차 캐시가 작동하지 않고 다시 select하게 된다.
-      // em.close(); // 영속성 컨텍스트를 아예 닫아버린다.
-
-      Member member2 = em.find(Member.class, 150L);
 
       System.out.println("===========================");
 

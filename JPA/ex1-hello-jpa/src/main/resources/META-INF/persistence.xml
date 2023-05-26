@@ -15,7 +15,14 @@
       <property name="hibernate.show_sql" value="true"/>
       <property name="hibernate.format_sql" value="true"/>
       <property name="hibernate.use_sql_comments" value="true"/>
-      <!--<property name="hibernate.hbm2ddl.auto" value="create" />-->
+      <!-- 기존 테이블 삭제 후 다시 생성 DROP + CREATE -->
+<!--      <property name="hibernate.hbm2ddl.auto" value="create" />-->
+      <!-- create 과정  + 종료 시점에 DROP -->
+<!--      <property name="hibernate.hbm2ddl.auto" value="create-drop" />-->
+      <!-- 변경된 것만 DB에 반영 -->
+      <property name="hibernate.hbm2ddl.auto" value="update" />
+      <!-- Entity와 테이블이 정상 매핑되었는지만 확인 -->
+<!--      <property name="hibernate.hbm2ddl.auto" value="validate" />-->
     </properties>
   </persistence-unit>
 </persistence>
