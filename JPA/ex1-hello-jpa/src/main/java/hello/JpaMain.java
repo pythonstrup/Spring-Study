@@ -1,4 +1,4 @@
-package com.hello;
+package hello;
 
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -18,9 +18,7 @@ public class JpaMain {
 
     try {
       Member member = new Member();
-      member.setId(2L);
-      member.setUsername("B");
-      member.setRoleType(RoleType.USER);
+      member.setUsername("A");
 
       em.persist(member);
 
