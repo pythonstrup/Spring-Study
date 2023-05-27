@@ -17,23 +17,7 @@ public class JpaMain {
     tx.begin();
 
     try {
-      Member member1 = new Member();
-      member1.setUsername("A");
 
-      Member member2 = new Member();
-      member2.setUsername("B");
-
-      Member member3 = new Member();
-      member3.setUsername("C");
-
-      System.out.println("===========================");
-      em.persist(member1);
-      em.persist(member2);
-      em.persist(member3);
-      System.out.println("member.id = " + member1.getId());
-      System.out.println("member.id = " + member2.getId());
-      System.out.println("member.id = " + member3.getId());
-      System.out.println("===========================");
 
       tx.commit();
     } catch (Exception e) {
@@ -125,5 +109,43 @@ public class JpaMain {
 //    Member member2 = em.find(Member.class, 150L);
 
     System.out.println("===========================");
+  }
+
+  private void pk(EntityManager em) {
+//    Member member1 = new Member();
+//    member1.setUsername("A");
+//
+//    Member member2 = new Member();
+//    member2.setUsername("B");
+//
+//    Member member3 = new Member();
+//    member3.setUsername("C");
+//
+//    System.out.println("===========================");
+//    em.persist(member1);
+//    em.persist(member2);
+//    em.persist(member3);
+//    System.out.println("member.id = " + member1.getId());
+//    System.out.println("member.id = " + member2.getId());
+//    System.out.println("member.id = " + member3.getId());
+//    System.out.println("===========================");
+  }
+
+  private void manyToOne(EntityManager em) {
+    Team team = new Team();
+    team.setName("TeamA");
+    em.persist(team);
+
+    Member member = new Member();
+    member.setUsername("member1");
+    member.setTeam(team);
+    em.persist(member);
+
+    em.flush();
+    em.clear();
+
+    Member findMember = em.find(Member.class, member.getId());
+    Team findTeam = member.getTeam();
+    System.out.println("findTeam = " + findTeam.getName());
   }
 }
