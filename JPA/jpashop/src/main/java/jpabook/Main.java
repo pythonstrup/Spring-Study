@@ -4,7 +4,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import jpabook.jpashop.domain.Book;
+import jpabook.jpashop.domain.Item;
 import jpabook.jpashop.domain.Member;
+import jpabook.jpashop.domain.Movie;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItem;
 
@@ -19,12 +22,12 @@ public class Main {
     tx.begin();
 
     try {
-      Order order = new Order();
-      em.persist(order);
+      Book book = new Book();
+      book.setName("JPA");
+      book.setAuthor("Park");
+      book.setIsbn("11111");
 
-      OrderItem orderItem = new OrderItem();
-      order.addOrderItem(orderItem);
-      em.persist(orderItem);
+      em.persist(book);
 
       tx.commit();
     } catch (Exception e) {
