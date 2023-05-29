@@ -23,18 +23,22 @@ public class JpaMain {
 
       Member member = new Member();
       member.setUsername("member1");
-      member.setTeam(team);
+//      member.changeTeam(team);
+      team.addMember(member);
       em.persist(member);
 
-      em.flush();
-      em.clear();
+//      em.flush();
+//      em.clear();
 
-      Member findMember = em.find(Member.class, member.getId());
-      List<Member> members = findMember.getTeam().getMembers();
+      Team findTeam = em.find(Team.class, team.getId());
+      List<Member> members = findTeam.getMembers();
 
+      System.out.println("======================");
+//      System.out.println(findTeam); // toString으로 인한 순환참조 문제
       for (Member m: members) {
         System.out.println("m = " + m.getUsername());
       }
+      System.out.println("======================");
 
       tx.commit();
     } catch (Exception e) {
@@ -149,20 +153,20 @@ public class JpaMain {
   }
 
   private void manyToOne(EntityManager em) {
-    Team team = new Team();
-    team.setName("TeamA");
-    em.persist(team);
-
-    Member member = new Member();
-    member.setUsername("member1");
-    member.setTeam(team);
-    em.persist(member);
-
-    em.flush();
-    em.clear();
-
-    Member findMember = em.find(Member.class, member.getId());
-    Team findTeam = member.getTeam();
-    System.out.println("findTeam = " + findTeam.getName());
+//    Team team = new Team();
+//    team.setName("TeamA");
+//    em.persist(team);
+//
+//    Member member = new Member();
+//    member.setUsername("member1");
+//    member.setTeam(team);
+//    em.persist(member);
+//
+//    em.flush();
+//    em.clear();
+//
+//    Member findMember = em.find(Member.class, member.getId());
+//    Team findTeam = member.getTeam();
+//    System.out.println("findTeam = " + findTeam.getName());
   }
 }
