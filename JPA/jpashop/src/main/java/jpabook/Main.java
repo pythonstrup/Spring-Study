@@ -6,6 +6,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.domain.OrderItem;
 
 public class Main {
 
@@ -18,10 +19,12 @@ public class Main {
     tx.begin();
 
     try {
-      Order order = em.find(Order.class, 1L);
-      Long memberId = order.getMemberId();
+      Order order = new Order();
+      em.persist(order);
 
-      Member member = em.find(Member.class, memberId);
+      OrderItem orderItem = new OrderItem();
+      order.addOrderItem(orderItem);
+      em.persist(orderItem);
 
       tx.commit();
     } catch (Exception e) {
