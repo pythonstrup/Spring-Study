@@ -1,5 +1,6 @@
 package hello;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -17,18 +18,12 @@ public class JpaMain {
     tx.begin();
 
     try {
-      Movie movie = new Movie();
-      movie.setDirector("Perter Jackson");
-      movie.setActor("Mortensen");
-      movie.setName("Lord of the rings");
-      movie.setPrice(15000);
+      Member member = new Member();
+      member.setUsername("user1");
+      member.setCreatedBy("Park");
+      member.setCreatedDate(LocalDateTime.now());
 
-      em.persist(movie);
-      em.flush();
-      em.clear();
-
-      Movie findMovie = em.find(Movie.class, movie.getId());
-      System.out.println("findMove = " + findMovie);
+      em.persist(member);
 
       tx.commit();
     } catch (Exception e) {
@@ -188,5 +183,20 @@ public class JpaMain {
 //      System.out.println("m = " + m.getUsername());
 //    }
 //    System.out.println("======================");
+  }
+
+  public void extension(EntityManager em) {
+    Movie movie = new Movie();
+    movie.setDirector("Perter Jackson");
+    movie.setActor("Mortensen");
+    movie.setName("Lord of the rings");
+    movie.setPrice(15000);
+
+    em.persist(movie);
+    em.flush();
+    em.clear();
+
+    Movie findMovie = em.find(Movie.class, movie.getId());
+    System.out.println("findMove = " + findMovie);
   }
 }
