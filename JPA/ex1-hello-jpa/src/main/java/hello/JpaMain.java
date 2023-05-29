@@ -17,33 +17,18 @@ public class JpaMain {
     tx.begin();
 
     try {
-      Team team = new Team();
-      team.setName("TeamA");
-      em.persist(team);
+      Movie movie = new Movie();
+      movie.setDirector("Perter Jackson");
+      movie.setActor("Mortensen");
+      movie.setName("Lord of the rings");
+      movie.setPrice(15000);
 
-      Locker locker = new Locker();
-      locker.setName("Locker1");
-      em.persist(locker);
+      em.persist(movie);
+      em.flush();
+      em.clear();
 
-      Member member = new Member();
-      member.setUsername("member1");
-      member.addLocker(locker);
-//      member.changeTeam(team);
-      team.addMember(member);
-      em.persist(member);
-
-//      em.flush();
-//      em.clear();
-
-      Team findTeam = em.find(Team.class, team.getId());
-      List<Member> members = findTeam.getMembers();
-
-      System.out.println("======================");
-//      System.out.println(findTeam); // toString으로 인한 순환참조 문제
-      for (Member m: members) {
-        System.out.println("m = " + m.getUsername());
-      }
-      System.out.println("======================");
+      Movie findMovie = em.find(Movie.class, movie.getId());
+      System.out.println("findMove = " + findMovie);
 
       tx.commit();
     } catch (Exception e) {
@@ -173,5 +158,35 @@ public class JpaMain {
 //    Member findMember = em.find(Member.class, member.getId());
 //    Team findTeam = member.getTeam();
 //    System.out.println("findTeam = " + findTeam.getName());
+  }
+
+  public void relation(EntityManager em) {
+//    Team team = new Team();
+//    team.setName("TeamA");
+//    em.persist(team);
+//
+//    Locker locker = new Locker();
+//    locker.setName("Locker1");
+//    em.persist(locker);
+//
+//    Member member = new Member();
+//    member.setUsername("member1");
+//    member.addLocker(locker);
+////      member.changeTeam(team);
+//    team.addMember(member);
+//    em.persist(member);
+//
+////      em.flush();
+////      em.clear();
+//
+//    Team findTeam = em.find(Team.class, team.getId());
+//    List<Member> members = findTeam.getMembers();
+//
+//    System.out.println("======================");
+////      System.out.println(findTeam); // toString으로 인한 순환참조 문제
+//    for (Member m: members) {
+//      System.out.println("m = " + m.getUsername());
+//    }
+//    System.out.println("======================");
   }
 }
