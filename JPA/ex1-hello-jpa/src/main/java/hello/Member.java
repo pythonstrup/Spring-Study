@@ -13,12 +13,18 @@ public class Member {
   @Column(name = "USERNAME")
   private String username;
 
-//  @Column(name = "TEAM_ID")
-//  private Long teamId;
-
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "TEAM_ID")
   private Team team;
+
+  @OneToOne
+  @JoinColumn(name = "LOCKER_ID")
+  private Locker locker;
+
+  public void addLocker(Locker locker) {
+    this.locker = locker;
+    locker.setMember(this);
+  }
 
   public Long getId() {
     return id;
@@ -42,6 +48,14 @@ public class Member {
 
   public void setTeam(Team team) {
     this.team = team;
+  }
+
+  public Locker getLocker() {
+    return locker;
+  }
+
+  public void setLocker(Locker locker) {
+    this.locker = locker;
   }
 
   // 연관관계 편의 메소드
