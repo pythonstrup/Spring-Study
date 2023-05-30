@@ -1,4 +1,4 @@
-package hello;
+package hello.entity;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;

@@ -1,6 +1,6 @@
 package hello.lecture;
 
-import hello.Member;
+import hello.entity.Member;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.hibernate.Hibernate;

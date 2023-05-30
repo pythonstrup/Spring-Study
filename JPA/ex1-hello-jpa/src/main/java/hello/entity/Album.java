@@ -1,4 +1,4 @@
-package hello;
+package hello.entity;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;

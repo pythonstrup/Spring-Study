@@ -1,4 +1,4 @@
-package hello;
+package hello.entity;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;

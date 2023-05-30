@@ -1,6 +1,6 @@
 package hello.lecture;
 
-import hello.Member;
+import hello.entity.Member;
 import java.util.List;
 import javax.persistence.EntityManager;
 

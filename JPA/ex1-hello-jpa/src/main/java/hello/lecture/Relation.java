@@ -1,8 +1,8 @@
 package hello.lecture;
 
-import hello.Locker;
-import hello.Member;
-import hello.Team;
+import hello.entity.Locker;
+import hello.entity.Member;
+import hello.entity.Team;
 import java.util.List;
 import javax.persistence.EntityManager;
 

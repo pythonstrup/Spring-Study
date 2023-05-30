@@ -1,6 +1,6 @@
 package hello.lecture;
 
-import hello.Member;
+import hello.entity.Member;
 import javax.persistence.EntityManager;
 
 public class Persistence {

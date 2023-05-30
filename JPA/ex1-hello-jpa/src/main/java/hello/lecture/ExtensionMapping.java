@@ -1,6 +1,6 @@
 package hello.lecture;
 
-import hello.Movie;
+import hello.entity.Movie;
 import javax.persistence.EntityManager;
 
 public class ExtensionMapping {
