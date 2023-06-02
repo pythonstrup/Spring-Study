@@ -1,7 +1,11 @@
 package hello;
 
+import hello.entity.Member;
 import hello.entity.cascadeEx.Child;
 import hello.entity.cascadeEx.Parent;
+import hello.entity.embed.Address;
+import hello.entity.embed.Period;
+import java.util.Date;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -18,20 +22,12 @@ public class JpaMain {
     tx.begin();
 
     try {
-      Child child1 = new Child();
-      Child child2 = new Child();
+      Member member = new Member();
+      member.setUsername("user1");
+      member.setHomeAddress(new Address("city", "street", "10000"));
+      member.setWorkPeriod(new Period());
 
-      Parent parent = new Parent();
-      parent.addChild(child1);
-      parent.addChild(child2);
-
-      em.persist(parent);
-
-      em.flush();
-      em.clear();
-
-      Parent findParent = em.find(Parent.class, parent.getId());
-      em.remove(findParent);
+      em.persist(member);
 
       tx.commit();
     } catch (Exception e) {

@@ -1,5 +1,8 @@
 package hello.entity;
 
+import hello.entity.embed.Address;
+import hello.entity.embed.Period;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
@@ -13,6 +16,20 @@ public class Member extends BaseEntity {
 
   @Column(name = "USERNAME")
   private String username;
+
+  @Embedded
+  private Period workPeriod;
+
+  @Embedded
+  private Address homeAddress;
+
+  @Embedded
+  @AttributeOverrides({
+    @AttributeOverride(name = "city", column=@Column(name="WORK_CITY")),
+    @AttributeOverride(name = "street", column=@Column(name="WORK_STREET")),
+    @AttributeOverride(name = "zipcode", column=@Column(name="WORK_ZIPCODE"))
+  })
+  private Address workAddress;
 
   @ManyToOne(fetch = FetchType.LAZY)
 //  @ManyToOne(fetch = FetchType.EAGER)
@@ -45,6 +62,22 @@ public class Member extends BaseEntity {
 
   public void setUsername(String username) {
     this.username = username;
+  }
+
+  public Period getWorkPeriod() {
+    return workPeriod;
+  }
+
+  public void setWorkPeriod(Period workPeriod) {
+    this.workPeriod = workPeriod;
+  }
+
+  public Address getHomeAddress() {
+    return homeAddress;
+  }
+
+  public void setHomeAddress(Address homeAddress) {
+    this.homeAddress = homeAddress;
   }
 
   public Team getTeam() {
