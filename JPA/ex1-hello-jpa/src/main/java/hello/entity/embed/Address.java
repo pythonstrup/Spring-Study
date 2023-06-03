@@ -1,5 +1,6 @@
 package hello.entity.embed;
 
+import java.util.Objects;
 import javax.persistence.Embeddable;
 
 @Embeddable
@@ -16,15 +17,46 @@ public class Address {
     this.zipcode = zipcode;
   }
 
+  private void setCity(String city) {
+    this.city = city;
+  }
+
   public String getCity() {
     return city;
+  }
+
+  private void setStreet(String street) {
+    this.street = street;
   }
 
   public String getStreet() {
     return street;
   }
 
+  private void setZipcode(String zipcode) {
+    this.zipcode = zipcode;
+  }
+
   public String getZipcode() {
     return zipcode;
+  }
+
+  // 값타입은 동일성 비교(==)가 아닌 동등성 비교(equals)를 해줘야 한다.
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Address address = (Address) o;
+    return Objects.equals(city, address.city) && Objects.equals(street,
+        address.street) && Objects.equals(zipcode, address.zipcode);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(city, street, zipcode);
   }
 }
