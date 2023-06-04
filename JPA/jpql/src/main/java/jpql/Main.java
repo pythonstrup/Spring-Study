@@ -22,19 +22,24 @@ public class Main {
     tx.begin();
 
     try {
+      Team team = new Team();
+      team.setName("teamA");
+      em.persist(team);
+
       Member member = new Member();
       member.setUsername("user1");
-      member.setAge(28);
+      member.setAge(20);
+      member.changeTeam(team);
       em.persist(member);
 
       em.flush();
       em.clear();
 
-      List<MemberDto> resultList = em.createQuery("select new jpql.dto.MemberDto(m.username, m.age) from Member m", MemberDto.class)
+      String query = "select m from Member m left join Team t on m.username = t.name";
+      List<Member> resultList = em.createQuery(query, Member.class)
           .getResultList();
-      MemberDto memberDto = resultList.get(0);
-      System.out.println("username = " + memberDto.getUsername());
-      System.out.println("age = " + memberDto.getAge());
+
+      System.out.println("resultList.size() = " + resultList.size());
 
       tx.commit();
     } catch (Exception e) {
@@ -46,4 +51,5 @@ public class Main {
 
     emf.close();
   }
+
 }
