@@ -1,10 +1,13 @@
 package hello.entity;
 
 import hello.entity.embed.Address;
+import hello.entity.embed.AddressEntity;
 import hello.entity.embed.Period;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.*;
 
 @Entity
@@ -22,6 +25,24 @@ public class Member extends BaseEntity {
 
   @Embedded
   private Address homeAddress;
+
+  // 값타입 컬렉션? 값타입을 하나 이상 사용할 때 사용
+  // 데이터베이스는 컬렉션을 저장할 수 없기 때문에 별도의 테이블이 필요하다.
+  @ElementCollection
+  @CollectionTable(name = "FAVORITE_FOOD", joinColumns = @JoinColumn(name = "MEMBER_ID"))
+  @Column(name = "FOOD_NAME")
+  private Set<String> favoriteFoods = new HashSet<>();
+
+//  @OrderColumn(name = "address_history_order") // 의도하지 않게 동작하는 경우가 많다!! 웬만하면 사용하지 말자..
+//  @ElementCollection
+//  @CollectionTable(name = "ADDRESS", joinColumns = @JoinColumn(name = "MEMBER_ID"))
+//  private List<Address> addressHistory = new ArrayList<>();
+
+  // 결론: 값타입 컬렉션은 사용하지 않는 것이 좋다?!?! => 실무에서는 일대다 관계를 위한 엔티티를 만들고, 여기에서 값타입을 사용하는 경우가 많다.
+  // 값타입 컬렉션을 매핑하는 테이블은 모든 컬럼을 묶어서 기본키를 구성해야한다. => null 입력 X, 중복저장 X
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true) // !!영속성 전이와 고아 객체 제거를 사용해 값타입 컬렉션처럼 사용한다!!
+  @JoinColumn(name = "MEMBER_ID")
+  private List<AddressEntity> addressHistory = new ArrayList<>();
 
   @Embedded
   @AttributeOverrides({
@@ -78,6 +99,30 @@ public class Member extends BaseEntity {
 
   public void setHomeAddress(Address homeAddress) {
     this.homeAddress = homeAddress;
+  }
+
+  public Set<String> getFavoriteFoods() {
+    return favoriteFoods;
+  }
+
+  public void setFavoriteFoods(Set<String> favoriteFoods) {
+    this.favoriteFoods = favoriteFoods;
+  }
+
+  public List<AddressEntity> getAddressHistory() {
+    return addressHistory;
+  }
+
+  public void setAddressHistory(List<AddressEntity> addressHistory) {
+    this.addressHistory = addressHistory;
+  }
+
+  public Address getWorkAddress() {
+    return workAddress;
+  }
+
+  public void setWorkAddress(Address workAddress) {
+    this.workAddress = workAddress;
   }
 
   public Team getTeam() {
