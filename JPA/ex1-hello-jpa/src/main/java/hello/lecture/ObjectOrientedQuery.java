@@ -29,4 +29,26 @@ public class ObjectOrientedQuery {
 
     List<Member> resultList = em.createQuery(cq).getResultList();
   }
+
+  // QueryDSL 또한, 문자가 아닌 자바코드로 JPQL을 작성할 수 있다는 장점
+  // JPQL의 빌더 역할, 단순하고 쉽다. 동적쿼리 작성도 편리하다.
+  // 컴파일 시점에 문법 오류를 발견할 수 있다.
+  // 실무에서 사용 강추!!
+  private void queryDsl(EntityManager em) {}
+
+  // JPA가 제공한는 SQL 직접 작성 기능!
+  // JPQL로 해결할 수 없는 특정 데이터베이스에 의존적인 기능이다. (SQL마다 방언이 다르기 때문에)
+  private void nativeSQL(EntityManager em) {
+    Member member1 = new Member();
+    member1.setUsername("user1");
+    em.persist(member1);
+
+    List<Member> resultList = em.createNativeQuery(
+            "select MEMBER_ID, city, street, zipcode, USERNAME from MEMBER", Member.class)
+        .getResultList();
+
+    for (Member member : resultList) {
+      System.out.println("member = " + member);
+    }
+  }
 }

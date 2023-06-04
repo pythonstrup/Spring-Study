@@ -29,7 +29,17 @@ public class JpaMain {
     tx.begin();
 
     try {
+      Member member1 = new Member();
+      member1.setUsername("user1");
+      em.persist(member1);
 
+      List<Member> resultList = em.createNativeQuery(
+              "select MEMBER_ID, city, street, zipcode, USERNAME from MEMBER", Member.class)
+          .getResultList();
+
+      for (Member member : resultList) {
+        System.out.println("member = " + member);
+      }
 
       tx.commit();
     } catch (Exception e) {
