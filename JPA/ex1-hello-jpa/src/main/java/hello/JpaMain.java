@@ -12,7 +12,11 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.ManyToMany;
 import javax.persistence.Persistence;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 public class JpaMain {
 
@@ -25,23 +29,7 @@ public class JpaMain {
     tx.begin();
 
     try {
-      Address homeAddress = new Address("homeCity", "street", "10000");
 
-      Member member = new Member();
-      member.setUsername("user1");
-      member.setHomeAddress(homeAddress);
-
-      member.getFavoriteFoods().add("Chicken");
-      member.getFavoriteFoods().add("Pork belly");
-      member.getFavoriteFoods().add("Pizza");
-
-      member.getAddressHistory().add(new AddressEntity(new Address("city1", "street1", "10001")));
-      member.getAddressHistory().add(new AddressEntity(new Address("city2", "street2", "10002")));
-
-      em.persist(member);
-
-      em.flush();
-      em.clear();
 
       tx.commit();
     } catch (Exception e) {
