@@ -38,16 +38,11 @@ public class Main {
       em.flush();
       em.clear();
 
-      String query = "select m.username, 'HELLO', true from Member m "
-          + "where m.memberType = :memberType";
-      List<Object[]> result = em.createQuery(query)
-          .setParameter("memberType", MemberType.ADMIN)
-          .getResultList();
-
-      for (Object[] objects : result) {
-        System.out.println("objects = " + objects[0]);
-        System.out.println("objects = " + objects[1]);
-        System.out.println("objects = " + objects[2]);
+      String query =
+          "select nullif(m.username, 'user123') as username from Member m ";
+      List<String> resultList = em.createQuery(query, String.class).getResultList();
+      for (String s : resultList) {
+        System.out.println("s = " + s);
       }
 
       tx.commit();
@@ -60,5 +55,4 @@ public class Main {
 
     emf.close();
   }
-
 }
