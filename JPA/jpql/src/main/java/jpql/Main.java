@@ -24,22 +24,20 @@ public class Main {
     tx.begin();
 
     try {
-      Team team = new Team();
-      team.setName("teamA");
-      em.persist(team);
+      Member member1 = new Member();
+      member1.setUsername("user1");
+      member1.setAge(20);
+      em.persist(member1);
 
-      Member member = new Member();
-      member.setUsername("user1");
-      member.setAge(20);
-      member.changeTeam(team);
-      member.setMemberType(MemberType.ADMIN);
-      em.persist(member);
+      Member member2 = new Member();
+      member2.setUsername("user2");
+      member2.setAge(21);
+      em.persist(member2);
 
       em.flush();
       em.clear();
 
-      String query =
-          "select nullif(m.username, 'user123') as username from Member m ";
+      String query = "select function('group_concat', m.username) from Member m";
       List<String> resultList = em.createQuery(query, String.class).getResultList();
       for (String s : resultList) {
         System.out.println("s = " + s);
