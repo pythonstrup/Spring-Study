@@ -60,18 +60,11 @@ public class Main {
       em.flush();
       em.clear();
 
-      String query = "select t From Team t";
-      List<Team> resultList = em.createQuery(query, Team.class)
-          .setFirstResult(0)
-          .setMaxResults(2)
+      List<Member> result = em.createNamedQuery("Member.findByUsername", Member.class)
+          .setParameter("username", member1.getUsername())
           .getResultList();
-      System.out.println("resultList = " + resultList);
-
-      for (Team team : resultList) {
-        System.out.println("team = " + team);
-        for (Member member : team.getMembers()) {
-          System.out.println("member = " + member);
-        }
+      for (Member member : result) {
+        System.out.println("member = " + member);
       }
 
       tx.commit();
