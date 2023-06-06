@@ -107,4 +107,49 @@ public class FetchJoin {
     // 원래 distinct는 지정한 모든 컬럼이 같아야 하지만, JPA는 식별자(id)를 통해 중복된 엔티티를 제거해준다!
     String queryDistinct = "select distinct t from Team t join fetch t.members";
   }
+
+  // 한계
+  // Fetch Join 대상에는 별칭을 주면 안된다. (하이버네이트는 가능하지만 가급적 사용하지 않는 것이 좋다.)
+  private void alias() { // 하지 말자!
+    String query = "select distinct t from Team t join fetch t.members as m where m.age > 10";
+
+    // Fetch 조인을 이어할 때는 별칭을 사용하기도 한다.
+    String aliasQuery = "select distinct t from Team t join fetch t.members as m join fetch m.somethings";
+  }
+
+  // 둘 이상의 컬렉션은 Fetch Join을 할 수 없다.
+  private void collection() {}
+
+  // 컬렉션을 Fetch Join하면 페이징 API(setFirstResult, setMaxResult)를 사용할 수 없다.
+  // 일대일, 다대일 같은 단일값 연관 관계는 Fetch Join해도 페이징이 가능하다.
+  // 그러나 하이버네이트는 경고 로그를 남기고 메모리에서 페이징하기 때문에 매우 위험하다!
+  private void paging(EntityManager em) {
+    String query = "select t From Team t join fetch t.members";
+    List<Team> resultList = em.createQuery(query, Team.class)
+        .setFirstResult(0)
+        .setMaxResults(1)
+        .getResultList();
+    System.out.println("resultList = " + resultList);
+  }
+  // 방향을 뒤집어서 해결할 수도 있지만.. (그럼 페이징이 잘 안된다.)
+
+  // 아래 예시는 Lazy 로딩을 사용한 방법이기 때문에 성능이 안 좋아진다는 단점이 존재한다.
+  // 하지만 @BatchSize 어노테이션을 사용하면 해당 문제를 해결할 수 있다!
+  // 해당 객체에 직접 넣어주는 방식(Team 객체 확인) 또는 Global Setting(persistence.xml)으로 가져가는 방법이 있다.
+  // BatchSize는 적절한 숫자를 기입하자(되도록 1000 이하)
+  private void pagingEx(EntityManager em) {
+    String query = "select t From Team t";
+    List<Team> resultList = em.createQuery(query, Team.class)
+        .setFirstResult(0)
+        .setMaxResults(2)
+        .getResultList();
+    System.out.println("resultList = " + resultList);
+
+    for (Team team : resultList) {
+      System.out.println("team = " + team);
+      for (Member member : team.getMembers()) {
+        System.out.println("member = " + member);
+      }
+    }
+  }
 }

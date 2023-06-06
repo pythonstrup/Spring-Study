@@ -60,14 +60,18 @@ public class Main {
       em.flush();
       em.clear();
 
-      String query = "select distinct t from Team t join fetch t.members";
-      List<Team> resultList = em.createQuery(query, Team.class).getResultList();
+      String query = "select t From Team t";
+      List<Team> resultList = em.createQuery(query, Team.class)
+          .setFirstResult(0)
+          .setMaxResults(2)
+          .getResultList();
+      System.out.println("resultList = " + resultList);
+
       for (Team team : resultList) {
-        System.out.println("team = " + team.getName() + " members = " +  team.getMembers().size());
+        System.out.println("team = " + team);
         for (Member member : team.getMembers()) {
           System.out.println("member = " + member);
         }
-        System.out.println("==========================================");
       }
 
       tx.commit();
