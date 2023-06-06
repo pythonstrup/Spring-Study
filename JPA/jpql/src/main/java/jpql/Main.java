@@ -36,7 +36,7 @@ public class Main {
 
       Member member1 = new Member();
       member1.setUsername("user1");
-      member1.setAge(20);
+      member1.setAge(22);
       member1.changeTeam(team1);
       em.persist(member1);
 
@@ -57,15 +57,22 @@ public class Main {
       member4.setAge(24);
       em.persist(member4);
 
-      em.flush();
-      em.clear();
+      // 자동으로 FLUSH 호출함
+      int resultCount = em.createQuery("update Member m set m.age = 20")
+          .executeUpdate();
+      System.out.println("resultCount = " + resultCount);
 
-      List<Member> result = em.createNamedQuery("Member.findByUsername", Member.class)
-          .setParameter("username", member1.getUsername())
-          .getResultList();
-      for (Member member : result) {
-        System.out.println("member = " + member);
-      }
+      // Flush만 됐기 때문에 1차캐시가 남아있어 20살이 아닌 원래 나이 그대로 뜬다.
+      System.out.println("member1.getAge() = " + member1.getAge());
+      System.out.println("member2.getAge() = " + member2.getAge());
+      System.out.println("member3.getAge() = " + member3.getAge());
+
+      // 아래와 같이 find로 해도 1차캐시의 영향을 받기 때문에 또 업데이트된 값이 뜨지 않는다.
+      Member findMember = em.find(Member.class, member1.getId());
+      System.out.println("findMember.getAge() = " + findMember.getAge());
+
+      // 때문에 아래와 같이 영속성 컨텍스트를 꼭 초기화해줘야한다.
+      em.clear();
 
       tx.commit();
     } catch (Exception e) {
