@@ -26,29 +26,48 @@ public class Main {
     tx.begin();
 
     try {
-      Team team = new Team();
-      team.setName("teamA");
-      em.persist(team);
+      Team team1 = new Team();
+      team1.setName("teamA");
+      em.persist(team1);
+
+      Team team2 = new Team();
+      team2.setName("teamB");
+      em.persist(team2);
 
       Member member1 = new Member();
       member1.setUsername("user1");
       member1.setAge(20);
-      member1.changeTeam(team);
+      member1.changeTeam(team1);
       em.persist(member1);
 
       Member member2 = new Member();
       member2.setUsername("user2");
       member2.setAge(21);
-      member2.changeTeam(team);
+      member2.changeTeam(team1);
       em.persist(member2);
+
+      Member member3 = new Member();
+      member3.setUsername("user3");
+      member3.setAge(28);
+      member3.changeTeam(team2);
+      em.persist(member3);
+
+      Member member4 = new Member();
+      member4.setUsername("user4");
+      member4.setAge(24);
+      em.persist(member4);
 
       em.flush();
       em.clear();
 
-      String query = "select m.username from Team t join t.members m";
-      Collection result = em.createQuery(query, Collection.class).getResultList();
-      for (Object o : result) {
-        System.out.println("o = " + o);
+      String query = "select distinct t from Team t join fetch t.members";
+      List<Team> resultList = em.createQuery(query, Team.class).getResultList();
+      for (Team team : resultList) {
+        System.out.println("team = " + team.getName() + " members = " +  team.getMembers().size());
+        for (Member member : team.getMembers()) {
+          System.out.println("member = " + member);
+        }
+        System.out.println("==========================================");
       }
 
       tx.commit();
