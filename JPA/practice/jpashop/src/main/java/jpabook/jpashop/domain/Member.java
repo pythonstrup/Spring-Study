@@ -23,6 +23,7 @@ public class Member {
   @Embedded
   private Address address;
 
+  // 컬렉션은 필드에서 초기화하자. => Best Practice
   @OneToMany(mappedBy = "member")
   private List<Order> orders = new ArrayList<>();
 }
