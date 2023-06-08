@@ -1,0 +1,26 @@
+# Spring Boot? ??? hikari ???? ???? hikari pool? ?????.
+#spring:
+#  datasource:
+#
+#    url: jdbc:h2:mem:test
+#    username: sa
+#    password:
+#    driver-class-name: org.h2.Driver
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: create
+#    properties:
+#      hibernate:
+##        show_sql: true  # System.out.println?? ?? ??? ?? ???. ?? ?? ???? ??!
+#        format_sql: true
+
+## 스프링 부트는 위의 설정이 없어도 자동으로 memory 모드로 돌려버린다.
+## test의 ddl 전략은 create-drop 이다.
+
+logging:
+  level:
+    org.springframework.jdbc.core: debug
+    org.hibernate:
+      SQL: debug
+      type: trace
