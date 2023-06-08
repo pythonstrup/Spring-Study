@@ -16,12 +16,15 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter @Setter
 @Table(name = "orders")
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // 기본 생성자 사용 못하게 막기
 public class Order {
 
   @Id @GeneratedValue
@@ -61,6 +64,9 @@ public class Order {
     this.delivery = delivery;
     delivery.setOrder(this);
   }
+
+  // 생성자를 사용하지 않도록 예방 => Lombok으로 처리 가능
+//  protected Order() {}
 
   // 생성 메소드
   public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems) {
