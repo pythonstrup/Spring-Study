@@ -40,6 +40,7 @@ public class OrderItem {
     OrderItem orderItem = new OrderItem();
     orderItem.setItem(item);
     orderItem.setCount(count);
+    orderItem.setOrderPrice(orderPrice);
 
     item.subtractStock(count);
     return orderItem;
