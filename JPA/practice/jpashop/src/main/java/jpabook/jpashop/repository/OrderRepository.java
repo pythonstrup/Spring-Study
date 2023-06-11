@@ -69,7 +69,7 @@ public class OrderRepository {
       } else {
         jpql += " and";
       }
-      jpql += " m.name like :name";
+      jpql += " m.username like :username";
     }
 
     TypedQuery<Order> query = em.createQuery(jpql, Order.class)
@@ -79,7 +79,7 @@ public class OrderRepository {
       query = query.setParameter("status", orderSearch.getOrderStatus());
     }
     if (StringUtils.hasText(orderSearch.getMemberName())) {
-      query = query.setParameter("name", orderSearch.getMemberName());
+      query = query.setParameter("username", orderSearch.getMemberName());
     }
 
     return query.getResultList();
@@ -105,7 +105,7 @@ public class OrderRepository {
     //회원 이름 검색
     if (StringUtils.hasText(orderSearch.getMemberName())) {
       Predicate name =
-          cb.like(m.<String>get("name"), "%" + orderSearch.getMemberName() + "%");
+          cb.like(m.<String>get("username"), "%" + orderSearch.getMemberName() + "%");
       criteria.add(name);
     }
 
