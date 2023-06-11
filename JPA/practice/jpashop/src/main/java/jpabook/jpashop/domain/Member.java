@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -18,6 +19,8 @@ public class Member {
   @Id @GeneratedValue
   @Column(name = "member_id")
   private Long id;
+
+//  @NotEmpty
   private String username;
 
   @Embedded
