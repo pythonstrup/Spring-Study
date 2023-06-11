@@ -20,12 +20,12 @@ public class MemberService {
   // readonly를 사용하지 않는 메소드에서만 아래처럼 적용해줄 수 있다.
   @Transactional
   public Long join(Member member) {
-    validateDulicateMember(member);
+    validateDuplicateMember(member);
     memberRepository.save(member);
     return member.getId();
   }
 
-  private void validateDulicateMember(Member member) {
+  private void validateDuplicateMember(Member member) {
     List<Member> findMembers = memberRepository.findByName(member.getUsername());
     if (!findMembers.isEmpty()) {
       throw new IllegalStateException("이미 존재하는 회원입니다.");
@@ -40,4 +40,9 @@ public class MemberService {
     return memberRepository.find(memberId);
   }
 
+  @Transactional
+  public void update(Long id, String name) {
+    Member member = memberRepository.find(id);
+    member.setUsername(name);
+  }
 }
