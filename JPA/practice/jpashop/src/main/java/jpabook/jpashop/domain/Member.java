@@ -1,5 +1,6 @@
 package jpabook.jpashop.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -28,5 +29,6 @@ public class Member {
 
   // 컬렉션은 필드에서 초기화하자. => Best Practice
   @OneToMany(mappedBy = "member")
+  @JsonIgnore
   private List<Order> orders = new ArrayList<>();
 }
