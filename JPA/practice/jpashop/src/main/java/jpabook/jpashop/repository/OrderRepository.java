@@ -114,6 +114,14 @@ public class OrderRepository {
     return query.getResultList();
   }
 
+  public List<Order> findAllWithMemberDelivery() {
+    return em.createQuery(
+        "select o from Order o "
+            + "join fetch o.member m "
+            + "join fetch o.delivery ", Order.class
+    ).getResultList();
+  }
+
   // 동적 쿼리 문제를 근본적으로 해결하는 방법은 QueryDSL이다.
   // 나중에 알아볼 것!
 }
