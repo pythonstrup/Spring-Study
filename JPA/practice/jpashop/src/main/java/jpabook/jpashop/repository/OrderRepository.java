@@ -132,4 +132,20 @@ public class OrderRepository {
             + "join o.member m "
             + "join o.delivery d", SimpleOrderDto.class).getResultList();
   }
+
+  // Hibernate6 부터는 distinct를 넣어주지 않아도 자동으로 distinct를 넣어준다고 한다.
+  // H2 Console에서 join을 직접 실행하면 같은 order_id 하나당 여러 개의 orderItem이 붙기 때문에 중복해서 열이 여러 개 생기는 현상을 확인할 수 있다.
+  // DB 쿼리에서는 DISTINCT를 넣어봤자 소용이 없다. 모든 열이 동일해야하기 때문이다.
+  // JPA는 distinct를 걸었을 때. order가 같은 값이면 묶어주는 기능이 따로 있는 것이다!!!
+  public List<Order> findAllWithItem() {
+    return em.createQuery(
+        "select distinct o from Order o "
+            + "join fetch o.member m "
+            + "join fetch o.delivery d "
+            + "join fetch o.orderItems oi "
+            + "join fetch oi.item i ", Order.class)
+//        .setFirstResult(1)
+//        .setMaxResults(100)
+        .getResultList();
+  }
 }

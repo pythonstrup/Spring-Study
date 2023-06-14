@@ -43,6 +43,22 @@ public class OrderApiController {
     return result;
   }
 
+  // 한방 쿼리 -> 사실상 V2랑 코드는 똑같다.
+  // 하지만 일대다를 fetch join하는 순간 페이징이 불가능해진다. 아래와 같은 경고가 뜬다.
+  //  WARN 6367 --- [nio-8080-exec-2] org.hibernate.orm.query: HHH90003004:
+  //  firstResult/maxResults specified with collection fetch; applying in memory
+  // 실제 쿼리에서는 OFFSET과 LIMIT이 사용되지 않는다.
+  // 대신 메모리에서 sorting이 일어나 페이징 처리를 해주는 것이다. 데이터가 많으면 아마도 out of memory 장애가 일어날 수 있다.. 정말 끝장..
+  // 일대다 fetch join에서는 페이징을 사용해서는 안된다!!!
+  // 또 컬렉션 페치 조인은 1개만 사용할 수 있다. 둘 이상의 컬렉션에 페치 조인을 하면 데이터가 부정합하게 조회될 수 있음을 명심하자.
+  @GetMapping("/api/v3/orders")
+  public List<OrderDto> ordersV3() {
+    List<Order> orders = orderRepository.findAllWithItem();
+    return orders.stream()
+        .map(OrderDto::new)
+        .collect(Collectors.toList());
+  }
+
   @Getter
   static class OrderDto {
 
