@@ -14,7 +14,9 @@ import jpabook.jpashop.domain.Category;
 import jpabook.jpashop.exception.NotEnoughStockException;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
+//@BatchSize(size = 100) // 컬렉션이 아닌 경우는 엔티티 위에 적어주면 되지만,, 사실 그냥 페치 조인버리는 게 훨씬 낫다.
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype")

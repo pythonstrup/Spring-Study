@@ -20,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Getter @Setter
@@ -35,6 +36,7 @@ public class Order {
   @JoinColumn(name = "member_id")
   private Member member;
 
+  @BatchSize(size = 1000) // 대체로 전역으로 설정하고 정말 필요한 경우에만 사용
   @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
   private List<OrderItem> orderItems = new ArrayList<>();
   // cascade => 영속성 전이

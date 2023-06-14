@@ -139,13 +139,31 @@ public class OrderRepository {
   // JPA는 distinct를 걸었을 때. order가 같은 값이면 묶어주는 기능이 따로 있는 것이다!!!
   public List<Order> findAllWithItem() {
     return em.createQuery(
-        "select distinct o from Order o "
-            + "join fetch o.member m "
-            + "join fetch o.delivery d "
-            + "join fetch o.orderItems oi "
-            + "join fetch oi.item i ", Order.class)
+            "select distinct o from Order o "
+                + "join fetch o.member m "
+                + "join fetch o.delivery d "
+                + "join fetch o.orderItems oi "
+                + "join fetch oi.item i ", Order.class)
 //        .setFirstResult(1)
 //        .setMaxResults(100)
         .getResultList();
   }
+
+  // batch size를 설정하면 그 사이즈만큼 order_item과 item을 한방에 다 가져와 버린다.
+  public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+    return em.createQuery(
+            "select o from Order o "
+                + "join fetch o.member m "
+                + "join fetch o.delivery ", Order.class
+        )
+        .setFirstResult(offset)
+        .setMaxResults(limit)
+        .getResultList();
+  }
+
+  // 한계 돌파
+  // 페이징 + 컬렉션 엔티티를 함께 조회하려면 어떻게 해야할까?
+  // X To One (OneToOne, ManyToOne) 관계를 모두 페치조인한다. => 이 관계는 row 수를 증가시키지 않는다.
+  // 그리고 컬렉션은 지연로딩으로 조회해온다.
+  // 그리고 지연 로딩 성능 최적화를 위해 hibernate.default_batch_fetch_size(전역)나 @BatchSize(지역)를 적용한다.
 }
