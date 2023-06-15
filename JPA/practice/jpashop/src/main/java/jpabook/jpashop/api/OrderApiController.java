@@ -11,6 +11,7 @@ import jpabook.jpashop.dto.order.OrderQueryDto;
 import jpabook.jpashop.repository.order.OrderRepository;
 import jpabook.jpashop.repository.order.OrderSearch;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
+import jpabook.jpashop.service.query.OrderQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +23,7 @@ public class OrderApiController {
 
   private final OrderRepository orderRepository;
   private final OrderQueryRepository orderQueryRepository;
+  private final OrderQueryService orderQueryService;
 
   // 바람직하지 않은 방법
   // 그리고 OSIV가 OFF되면 오류가 터질 수 있다. => LAZY 로딩을 트랜잭션(서비스)으로 끌고 들어가야 한다...
@@ -61,6 +63,12 @@ public class OrderApiController {
     return orders.stream()
         .map(OrderDto::new)
         .collect(Collectors.toList());
+  }
+
+  // OSIV가 꺼져있다면 아래와 같이 해결할 수 있다!!
+  @GetMapping("/api/v3/orders/osiv")
+  public List<OrderDto> ordersV3ForOSIVOFF() {
+    return orderQueryService.ordersV3();
   }
 
   // batchSize로 쿼리 호출 수가 1+N에서 1+1로 최적화된다.
