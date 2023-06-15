@@ -1,17 +1,16 @@
 package jpabook.jpashop.api;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItem;
-import jpabook.jpashop.domain.OrderStatus;
-import jpabook.jpashop.dto.OrderQueryDto;
+import jpabook.jpashop.dto.order.OrderDto;
+import jpabook.jpashop.dto.order.OrderFlatDto;
+import jpabook.jpashop.dto.order.OrderItemQueryDto;
+import jpabook.jpashop.dto.order.OrderQueryDto;
 import jpabook.jpashop.repository.order.OrderRepository;
 import jpabook.jpashop.repository.order.OrderSearch;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +24,7 @@ public class OrderApiController {
   private final OrderQueryRepository orderQueryRepository;
 
   // 바람직하지 않은 방법
+  // 그리고 OSIV가 OFF되면 오류가 터질 수 있다. => LAZY 로딩을 트랜잭션(서비스)으로 끌고 들어가야 한다...
   @GetMapping("/api/v1/orders")
   public List<Order> ordersV1() {
     List<Order> all = orderRepository.findAllByString(new OrderSearch());
@@ -89,44 +89,18 @@ public class OrderApiController {
     return orderQueryRepository.findOrderQueryDtosOptimization();
   }
 
-  @Getter
-  static class OrderDto {
-
-    private Long orderId;
-    private String name;
-    private LocalDateTime orderDate;
-    private OrderStatus orderStatus;
-    private Address address;
-    private List<OrderItemDto> orderItems;
-
-    public OrderDto(Order order) {
-      orderId = order.getId();
-      name = order.getMember().getUsername();
-      orderDate = order.getOrderDate();
-      orderStatus = order.getStatus();
-      address = order.getDelivery().getAddress();
-
-//      order.getOrderItems().stream().forEach(o -> o.getItem().getName()); // LAZY 초기화
-//      orderItems = order.getOrderItems();
-
-      orderItems = order.getOrderItems().stream()
-          .map(OrderItemDto::new)
-          .collect(Collectors.toList());
-    }
-  }
-
-  @Getter
-  static class OrderItemDto {
-
-    // 필요한 정보만 뽑아올 수 있다.
-    private String itemName;
-    private int price;
-    private int count;
-
-    public OrderItemDto(OrderItem orderItem) {
-      itemName = orderItem.getItem().getName();
-      price = orderItem.getOrderPrice();
-      count = orderItem.getCount();
-    }
+  // 쿼리가 한 번 나간다는 장점이 있지만...
+  // 데이터에 중복데이터가 추가된다는 점에서 V5보다 느릴 수 있고, 애플리케이션에서의 추가 작업이 많아진다.
+  // 그리고 페이징이 불가능하다.
+  @GetMapping("/api/v6/orders")
+  public List<OrderQueryDto> ordersV6() {
+    List<OrderFlatDto> flats = orderQueryRepository.findOrderQueryDtosFlat();
+    return flats.stream()
+        .collect(Collectors.groupingBy(o -> new OrderQueryDto(o.getOrderId(), o.getName(), o.getOrderDate(), o.getOrderStatus(),o.getAddress()),
+            Collectors.mapping(o -> new OrderItemQueryDto(o.getOrderId(), o.getItemName(), o.getOrderPrice(), o.getCount()), Collectors.toList())
+            )).entrySet().stream()
+        .map(e -> new OrderQueryDto(e.getKey().getOrderId(), e.getKey().getName(),
+            e.getKey().getOrderDate(), e.getKey().getOrderStatus(), e.getKey().getAddress(), e.getValue()))
+        .collect(Collectors.toList());
   }
 }

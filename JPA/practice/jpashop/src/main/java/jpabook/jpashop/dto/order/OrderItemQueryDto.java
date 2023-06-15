@@ -1,4 +1,4 @@
-package jpabook.jpashop.dto;
+package jpabook.jpashop.dto.order;
 
 import lombok.Data;
 

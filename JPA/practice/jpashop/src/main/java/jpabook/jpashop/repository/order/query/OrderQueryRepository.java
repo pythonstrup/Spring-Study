@@ -4,8 +4,9 @@ import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import jpabook.jpashop.dto.OrderItemQueryDto;
-import jpabook.jpashop.dto.OrderQueryDto;
+import jpabook.jpashop.dto.order.OrderFlatDto;
+import jpabook.jpashop.dto.order.OrderItemQueryDto;
+import jpabook.jpashop.dto.order.OrderQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -27,7 +28,7 @@ public class OrderQueryRepository {
 
   private List<OrderItemQueryDto> findOrderItems(Long orderId) {
     return em.createQuery(
-        "select new jpabook.jpashop.dto.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count) "
+        "select new jpabook.jpashop.dto.order.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count) "
             + "from OrderItem oi "
             + "join oi.item i "
             + "where oi.order.id = :orderId", OrderItemQueryDto.class)
@@ -37,7 +38,7 @@ public class OrderQueryRepository {
 
   private List<OrderQueryDto> findOrders() {
     return em.createQuery(
-        "select new jpabook.jpashop.dto.OrderQueryDto(o.id, m.username, o.orderDate, o.status, d.address) "
+        "select new jpabook.jpashop.dto.order.OrderQueryDto(o.id, m.username, o.orderDate, o.status, d.address) "
             + "from Order o "
             + "join o.member m "
             + "join o.delivery d", OrderQueryDto.class
@@ -62,7 +63,7 @@ public class OrderQueryRepository {
 
   private Map<Long, List<OrderItemQueryDto>> findOrderItemMap(List<Long> orderIds) {
     List<OrderItemQueryDto> orderItems = em.createQuery(
-            "select new jpabook.jpashop.dto.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count) "
+            "select new jpabook.jpashop.dto.order.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count) "
                 + "from OrderItem oi "
                 + "join oi.item i "
                 + "where oi.order.id in :orderIds", OrderItemQueryDto.class)
@@ -73,4 +74,18 @@ public class OrderQueryRepository {
     return orderItemMap;
   }
 
+  // 한 방 쿼리지만, Order가 중복되어 나간다. (OrderItem이 컬렉션이기 때문에)
+  // 그리고 API 스펙도 맞지가 않는다.
+  // 이를 해결하려면 해당 정보를 반환받는 service 단에서 loop를 돌려 맞춰줘야한다....
+  public List<OrderFlatDto> findOrderQueryDtosFlat() {
+    return em.createQuery(
+        "select new "
+            + " jpabook.jpashop.dto.order.OrderFlatDto(o.id, m.username, o.orderDate, o.status, d.address, i.name, oi.orderPrice, oi.count)"
+            + " from Order o "
+            + " join o.member m "
+            + " join o.delivery d "
+            + " join o.orderItems oi "
+            + " join oi.item i", OrderFlatDto.class
+    ).getResultList();
+  }
 }

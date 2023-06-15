@@ -3,7 +3,7 @@ package jpabook.jpashop.api;
 import java.util.List;
 import java.util.stream.Collectors;
 import jpabook.jpashop.domain.Order;
-import jpabook.jpashop.dto.SimpleOrderDto;
+import jpabook.jpashop.dto.order.SimpleOrderDto;
 import jpabook.jpashop.repository.order.OrderRepository;
 import jpabook.jpashop.repository.order.OrderSearch;
 import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryRepository;
