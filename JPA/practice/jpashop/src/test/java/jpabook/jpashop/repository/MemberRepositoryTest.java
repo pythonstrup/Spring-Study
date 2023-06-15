@@ -1,20 +1,17 @@
 package jpabook.jpashop.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import jpabook.jpashop.domain.Member;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 class MemberRepositoryTest {
 
   @Autowired
-  MemberRepository memberRepository;
+  MemberRepositoryOld memberRepository;
 
   @Test
   @Transactional // 스프링에서는 Test에서 @Transactional을 걸면 해당 코드를 마친 후, 롤백을 해버린다는 사실!
