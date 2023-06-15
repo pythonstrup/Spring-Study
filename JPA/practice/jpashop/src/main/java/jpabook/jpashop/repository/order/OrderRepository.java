@@ -1,5 +1,10 @@
 package jpabook.jpashop.repository.order;
 
+import static jpabook.jpashop.domain.QMember.member;
+import static jpabook.jpashop.domain.QOrder.order;
+
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -11,16 +16,22 @@ import jakarta.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.dto.order.SimpleOrderDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 @Repository
-@RequiredArgsConstructor
 public class OrderRepository {
 
   private final EntityManager em;
+  private final JPAQueryFactory query;
+
+  public OrderRepository(EntityManager em) {
+    this.em = em;
+    this.query = new JPAQueryFactory(em);
+  }
 
   public Long save(Order order) {
     em.persist(order);
@@ -113,8 +124,35 @@ public class OrderRepository {
     TypedQuery<Order> query = em.createQuery(cq).setMaxResults(1000);
     return query.getResultList();
   }
+
   // 동적 쿼리 문제를 근본적으로 해결하는 방법은 QueryDSL이다.
-  // 나중에 알아볼 것!
+  // QueryDSL은 사실 JPQL을 코드로 만드는 빌더 역할을 할 뿐이다.
+  public List<Order> findAll(OrderSearch orderSearch) {
+    return query.select(order)
+        .from(order)
+        .join(order.member, member)
+        .where(
+            statusEq(orderSearch.getOrderStatus()),
+            nameLike(orderSearch.getMemberName())
+        )
+        .limit(100)
+        .fetch();
+  }
+
+  // 동적 쿼리를 하려면 아래와 같이 따로 빼줘야한다.
+  private BooleanExpression statusEq(OrderStatus orderStatus) {
+    if (orderStatus == null) {
+      return null;
+    }
+    return order.status.eq(orderStatus);
+  }
+
+  private BooleanExpression nameLike(String memberName) {
+    if (!StringUtils.hasText(memberName)) {
+      return null;
+    }
+    return member.username.like(memberName);
+  }
 
   public List<Order> findAllWithMemberDelivery() {
     return em.createQuery(

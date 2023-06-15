@@ -11,9 +11,11 @@ import jpabook.jpashop.repository.MemberRepositoryOld;
 import jpabook.jpashop.repository.order.OrderRepository;
 import jpabook.jpashop.repository.order.OrderSearch;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -65,6 +67,8 @@ public class OrderService {
    * 검색
    */
   public List<Order> findOrders(OrderSearch orderSearch) {
-    return orderRepository.findAllByCriteria(orderSearch);
+//    return orderRepository.findAllByCriteria(orderSearch);
+    log.info("QueryDSL!!!");
+    return orderRepository.findAll(orderSearch);
   }
 }
