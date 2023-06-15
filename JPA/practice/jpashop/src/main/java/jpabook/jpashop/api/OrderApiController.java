@@ -77,9 +77,16 @@ public class OrderApiController {
         .collect(Collectors.toList());
   }
 
+  // N+1 문제 발생함
   @GetMapping("/api/v4/orders")
   public List<OrderQueryDto> ordersV4() {
     return orderQueryRepository.findOrderQueryDtos();
+  }
+
+  // O(1)로 최적화 => 예제에서는 쿼리 2번 나감
+  @GetMapping("/api/v5/orders")
+  public List<OrderQueryDto> ordersV5() {
+    return orderQueryRepository.findOrderQueryDtosOptimization();
   }
 
   @Getter
