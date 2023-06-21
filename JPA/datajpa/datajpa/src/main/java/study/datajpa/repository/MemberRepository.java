@@ -29,4 +29,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
   // DTO 조회 => 생성자로 반환을 해줘야한다.
   @Query("select new study.datajpa.dto.MemberDto(m.id, m.username, t.name) from Member m join m.team t")
   List<MemberDto> findMemberDto();
+
+  // 컬렉션 파라미터 바인딩
+  @Query("select m from Member m where m.username in :names")
+  List<Member> findByNames(@Param("names") List<String> names);
 }

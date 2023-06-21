@@ -133,4 +133,19 @@ class MemberRepositoryTest {
     assertThat(memberDto.get(0).getUsername()).isEqualTo(member1.getUsername());
     assertThat(memberDto.get(0).getTeamName()).isEqualTo(team.getName());
   }
+
+  @Test
+  void findByNames() {
+    Member member1 = new Member("AAA", 10);
+    Member member2 = new Member("BBB", 20);
+    Member member3 = new Member("CCC", 20);
+    memberRepository.save(member1);
+    memberRepository.save(member2);
+    memberRepository.save(member3);
+
+    List<Member> findMembers = memberRepository.findByNames(List.of("AAA", "CCC"));
+    assertThat(findMembers.size()).isEqualTo(2);
+    assertThat(findMembers.get(0).getUsername()).isEqualTo("AAA");
+    assertThat(findMembers.get(1).getUsername()).isEqualTo("CCC");
+  }
 }
