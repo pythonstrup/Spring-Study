@@ -3,7 +3,10 @@ package study.datajpa.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,5 +150,34 @@ class MemberRepositoryTest {
     assertThat(findMembers.size()).isEqualTo(2);
     assertThat(findMembers.get(0).getUsername()).isEqualTo("AAA");
     assertThat(findMembers.get(1).getUsername()).isEqualTo("CCC");
+  }
+
+  @Test
+  void testReturnType() {
+    Member member1 = new Member("AAA", 10);
+    Member member2 = new Member("BBB", 20);
+    memberRepository.save(member1);
+    memberRepository.save(member2);
+
+    List<Member> memberList = memberRepository.findListByUsername("AAA");
+
+    // 만약 결과값이 2개 이상 가져와지면 오류가 발생한다.
+    // query did not return a unique result: 2
+    Member findMember = memberRepository.findMemberByUsername("AAA");
+    Optional<Member> optionalMember = memberRepository.findOptionalByUsername("AAA");
+    assertThat(memberList).isExactlyInstanceOf(ArrayList.class);
+    assertThat(findMember).isExactlyInstanceOf(Member.class);
+    assertThat(optionalMember).isExactlyInstanceOf(Optional.class);
+
+    List<Member> emptyList = memberRepository.findListByUsername("a");
+    assertThat(emptyList).isExactlyInstanceOf(ArrayList.class);
+    assertThat(emptyList.size()).isEqualTo(0);
+
+    Member emptyMember = memberRepository.findMemberByUsername("a");
+    assertThat(emptyMember).isNull();
+
+    Optional<Member> emptyOptionalMember = memberRepository.findOptionalByUsername("a");
+    assertThat(emptyOptionalMember).isExactlyInstanceOf(Optional.class);
+    assertThat(emptyOptionalMember.isEmpty()).isTrue();
   }
 }
