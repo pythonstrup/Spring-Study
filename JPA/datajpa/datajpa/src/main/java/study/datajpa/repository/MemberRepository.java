@@ -16,4 +16,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
   List<Member> findByUsernameAndAgeGreaterThan(String username, int age);
 
+  // 실수로 오타를 작성하면 컴파일할 때 문법 오류를 다 잡아줄 수 있다는 장점이 있다.
+  // 동적 쿼리는 QueryDSL을 추천
+  @Query("select m from Member m where m.username = :username and m.age = :age")
+  List<Member> findUser(@Param("username") String username, @Param("age") int age);
+
 }
