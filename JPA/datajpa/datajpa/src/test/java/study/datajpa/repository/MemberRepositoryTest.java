@@ -10,6 +10,11 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
@@ -178,5 +183,58 @@ class MemberRepositoryTest {
     Optional<Member> emptyOptionalMember = memberRepository.findOptionalByUsername("a");
     assertThat(emptyOptionalMember).isExactlyInstanceOf(Optional.class);
     assertThat(emptyOptionalMember.isEmpty()).isTrue();
+  }
+
+  @Test
+  void paging() {
+    // given
+    memberRepository.save(new Member("member1", 10));
+    memberRepository.save(new Member("member2", 10));
+    memberRepository.save(new Member("member3", 10));
+    memberRepository.save(new Member("member4", 10));
+    memberRepository.save(new Member("member5", 10));
+    memberRepository.save(new Member("member6", 10));
+
+    int age = 10;
+    PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Direction.DESC, "username"));
+
+    // 리스트로 받을 수도 있지만, 대신 Page의 기능을 사용하지 못한다!
+    // when1
+    Page<Member> page = memberRepository.findByAge(age, pageRequest);
+    // page to dto => Entity를 그대로 노출하지 않도록 하자!!!
+    Page<MemberDto> dtoList = page.map(
+        member -> new MemberDto(member.getId(), member.getUsername(), null));
+    // then1
+    List<Member> content = page.getContent();
+    long totalElements = page.getTotalElements();
+    assertThat(content.size()).isEqualTo(3);
+    assertThat(totalElements).isEqualTo(6);
+    assertThat(page.getNumber()).isEqualTo(0);
+    assertThat(page.getTotalPages()).isEqualTo(2);
+    assertThat(page.isFirst()).isTrue();
+    assertThat(page.hasNext()).isTrue();
+
+
+    // slice는 total count를 가져오지 않는다. (쿼리 안 날림)
+    // 대신 limit에서 하나 더 가져와서 다음 페이지가 있는지 확인한다.
+    // when2
+    Slice<Member> slice = memberRepository.findSliceByAge(age, pageRequest);
+    // then2
+    List<Member> contentSlice = slice.getContent();
+    assertThat(contentSlice.size()).isEqualTo(3);
+    assertThat(slice.getNumber()).isEqualTo(0);
+    assertThat(slice.isFirst()).isTrue();
+    assertThat(slice.hasNext()).isTrue();
+
+
+    // 사실 totalCount가 성능상 문제가 될 수 있는 부분이다.
+    // @Query 어노테이션을 통해 본 쿼리와 카운트 쿼리를 분리할 수 있다. 카운트 쿼리에서 불필요한 조인을 하지 않도록 만들어 성능을 높여줄 수 있다.
+    // when3
+    Page<Member> dividedQuery = memberRepository.findPageQueryByAge(age, pageRequest);
+    // then3
+    List<Member> dividedQueryContent = page.getContent();
+    long dividedQueryCount = page.getTotalElements();
+    assertThat(dividedQueryContent.size()).isEqualTo(3);
+    assertThat(dividedQueryCount).isEqualTo(6);
   }
 }
