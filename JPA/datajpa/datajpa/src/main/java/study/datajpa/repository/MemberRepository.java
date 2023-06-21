@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 
 // 구현체를 따로 만든 적이 없는데, 해당 객체를 어떻게 사용할 수 있는 걸까?
@@ -21,4 +22,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
   @Query("select m from Member m where m.username = :username and m.age = :age")
   List<Member> findUser(@Param("username") String username, @Param("age") int age);
 
+  // 값 조회
+  @Query("select m.username from Member m")
+  List<String> findByUsernameList();
+
+  // DTO 조회 => 생성자로 반환을 해줘야한다.
+  @Query("select new study.datajpa.dto.MemberDto(m.id, m.username, t.name) from Member m join m.team t")
+  List<MemberDto> findMemberDto();
 }

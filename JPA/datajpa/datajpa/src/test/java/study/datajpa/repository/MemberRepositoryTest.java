@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
+import study.datajpa.entity.Team;
 
 @Transactional
 @SpringBootTest
@@ -17,6 +19,9 @@ class MemberRepositoryTest {
 
   @Autowired
   MemberRepository memberRepository;
+
+  @Autowired
+  TeamRepository teamRepository;
 
   @Test
   public void testMember() {
@@ -100,5 +105,32 @@ class MemberRepositoryTest {
 
     Member findMember = result.get(0);
     assertThat(findMember).isEqualTo(member1);
+  }
+
+  @Test
+  void findUsernameList() {
+    Member member1 = new Member("AAA", 10);
+    Member member2 = new Member("BBB", 20);
+    memberRepository.save(member1);
+    memberRepository.save(member2);
+
+    List<String> usernameList = memberRepository.findByUsernameList();
+    assertThat(usernameList.get(0)).isEqualTo("AAA");
+    assertThat(usernameList.get(1)).isEqualTo("BBB");
+  }
+
+  @Test
+  void findMemberDto() {
+    Team team = new Team("teamA");
+    teamRepository.save(team);
+
+    Member member1 = new Member("AAA", 10);
+    member1.changeTeam(team);
+    memberRepository.save(member1);
+
+    List<MemberDto> memberDto = memberRepository.findMemberDto();
+    assertThat(memberDto.get(0).getId()).isEqualTo(member1.getId());
+    assertThat(memberDto.get(0).getUsername()).isEqualTo(member1.getUsername());
+    assertThat(memberDto.get(0).getTeamName()).isEqualTo(team.getName());
   }
 }
