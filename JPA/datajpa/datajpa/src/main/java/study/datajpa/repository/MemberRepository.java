@@ -1,5 +1,6 @@
 package study.datajpa.repository;
 
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import study.datajpa.entity.Member;
 
@@ -7,4 +8,7 @@ import study.datajpa.entity.Member;
 // Spring Data JPA가 자바의 기본적인 프록시 기술로 가짜 객체를 만들어 주입해줬기 때문이다.
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
+  List<Member> findByUsername(String username);
+
+  List<Member> findByUsernameAndAgeGreaterThan(String username, int age);
 }
