@@ -311,8 +311,48 @@ class MemberRepositoryTest {
 
     List<Member> findMember = memberRepository.findEntityGraphByUsername("member1");
     System.out.println("findMember = " + findMember);
+  }
 
-    // then
+  @Test
+  void queryHint() {
+    // given
+    Member member1 = new Member("member1", 20);
+    memberRepository.save(member1);
+    em.flush();
+    em.clear();
 
+    // when
+//    Member findMember = memberRepository.findById(member1.getId()).get();
+//    findMember.setUsername("member2");
+//    em.flush();
+
+    // 더티 체킹의 치명적인 단점
+    // 원본이 있어야 한다. (원본이 있어야 비교가 가능하고 변경감지를 할 수 있기 때문에)
+    // 때문에 객체를 2개로 나눠 관리해야한다. => 메모리를 먹는다.
+    // 만약 read only로만 사용할 거라면 @QueryHint를 사용하면 된다.
+    // 해당 기능은 JPA에서 제공하는 것이 아니라 Hibernate가 제공하는 것이다.
+    // JPA에서는 이를 사용할 수 있도록 '구멍'을 열어줬는데 이게 "query hint"다
+    Member findMember = memberRepository.findReadOnlyByUsername("member1");
+    findMember.setUsername("member2");
+    em.flush();
+    em.clear();
+
+    // read only이기 때문에 더티체킹이 작동하지 않고 결과적으로 테이블에 변경이 일어나지 않는다.
+    Member afterMember = memberRepository.findById(findMember.getId()).get();
+    System.out.println("afterMember.getUsername() = " + afterMember.getUsername());
+  }
+
+  @Test
+  void testLock() {
+    // given
+    Member member1 = new Member("member1", 20);
+    memberRepository.save(member1);
+    em.flush();
+    em.clear();
+
+    // 실시간 서비스가 많은 프로그램은 락을 최대한 안 거는 것이 좋다.
+    List<Member> findMember = memberRepository.findLockByUsername("member1");
+    // select m1_0.member_id,m1_0.age,m1_0.team_id,m1_0.username
+    // from member m1_0 where m1_0.username='member1' for update
   }
 }
