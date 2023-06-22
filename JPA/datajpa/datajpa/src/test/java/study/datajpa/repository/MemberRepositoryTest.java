@@ -355,4 +355,14 @@ class MemberRepositoryTest {
     // select m1_0.member_id,m1_0.age,m1_0.team_id,m1_0.username
     // from member m1_0 where m1_0.username='member1' for update
   }
+
+  @Test
+  void callCustom() {
+    memberRepository.save(new Member("member1", 19));
+    memberRepository.save(new Member("member2", 20));
+    List<Member> result = memberRepository.findMemberCustom();
+    for (Member member : result) {
+      System.out.println("member = " + member);
+    }
+  }
 }
