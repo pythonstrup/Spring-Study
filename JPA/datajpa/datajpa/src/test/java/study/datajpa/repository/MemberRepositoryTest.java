@@ -3,6 +3,8 @@ package study.datajpa.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +31,9 @@ class MemberRepositoryTest {
 
   @Autowired
   TeamRepository teamRepository;
+
+  @PersistenceContext
+  EntityManager em;
 
   @Test
   public void testMember() {
@@ -236,5 +241,30 @@ class MemberRepositoryTest {
     long dividedQueryCount = page.getTotalElements();
     assertThat(dividedQueryContent.size()).isEqualTo(3);
     assertThat(dividedQueryCount).isEqualTo(6);
+  }
+
+  @Test
+  void bulkUpdate() {
+    // given
+    memberRepository.save(new Member("member1", 10));
+    memberRepository.save(new Member("member2", 19));
+    memberRepository.save(new Member("member3", 20));
+    memberRepository.save(new Member("member4", 21));
+    memberRepository.save(new Member("member5", 40));
+
+    // when
+    int resultCount = memberRepository.bulkAgePlus(20);
+
+    // 벌크연산을 하면 DB에만 업데이트되고 영속성 컨텍스트에서는 적용이 안되기 때문에 초기화작업을 해줘야한다.
+//    em.flush(); // 변경사항 DB 저장
+//    em.clear(); // 초기화
+    // @Modifying의 옵션 중 clearAutomatically = true를 설정하면 자동으로 초기화 작업을 해준다!
+
+    List<Member> findMember = memberRepository.findByUsername("member5");
+    Member member5 = findMember.get(0);
+    System.out.println("member5.age = " + member5.getAge());
+
+    // then
+    assertThat(resultCount).isEqualTo(3);
   }
 }
