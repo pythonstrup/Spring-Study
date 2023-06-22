@@ -1,7 +1,6 @@
 package study.datajpa.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -266,5 +265,54 @@ class MemberRepositoryTest {
 
     // then
     assertThat(resultCount).isEqualTo(3);
+  }
+
+  @Test
+  void findMemberLazy() throws Exception {
+    // given
+    Team teamA = new Team("teamA");
+    Team teamB = new Team("teamB");
+    teamRepository.save(teamA);
+    teamRepository.save(teamB);
+
+    Member member1 = new Member("member1", 20, teamA);
+    Member member2 = new Member("member2", 28, teamB);
+    memberRepository.save(member1);
+    memberRepository.save(member2);
+
+    em.flush();
+    em.clear();
+
+    // when
+    // N+1 Problem => entity graph 사용하기 전
+//    List<Member> members = memberRepository.findAll();
+//    for (Member member : members) {
+//      System.out.println("member.getUsername() = " + member.getUsername());
+//      System.out.println("member.getTeam().getClass() = " + member.getTeam().getClass());
+//      System.out.println("member.getTeam().getName() = " + member.getTeam().getName());
+//    }
+
+    // Fetch Join
+//    List<Member> fetchJoinResult = memberRepository.findMemberFetchJoin();
+    // 페치 조인을 하면 Team이 Proxy 객체가 아닌 '진찌' Entity 객체가 반환된다.
+//    for (Member member : fetchJoinResult) {
+//      System.out.println("member.getUsername() = " + member.getUsername());
+//      System.out.println("member.getTeam().getClass() = " + member.getTeam().getClass());
+//      System.out.println("member.getTeam().getName() = " + member.getTeam().getName());
+//    }
+
+    // @EntityGraph 어노테이션을 추가하면?
+    List<Member> entityGraphResult = memberRepository.findAll();
+    for (Member member : entityGraphResult) {
+      System.out.println("member.getUsername() = " + member.getUsername());
+      System.out.println("member.getTeam().getClass() = " + member.getTeam().getClass());
+      System.out.println("member.getTeam().getName() = " + member.getTeam().getName());
+    }
+
+    List<Member> findMember = memberRepository.findEntityGraphByUsername("member1");
+    System.out.println("findMember = " + findMember);
+
+    // then
+
   }
 }
