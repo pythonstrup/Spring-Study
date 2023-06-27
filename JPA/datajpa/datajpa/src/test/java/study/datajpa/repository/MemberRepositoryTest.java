@@ -11,6 +11,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
@@ -387,5 +389,37 @@ class MemberRepositoryTest {
 
     // then
     Assertions.assertThat(result.size()).isEqualTo(1);
+  }
+
+  @Test
+  void queryByExample() {
+    // given
+    Team teamA = new Team("teamA");
+    em.persist(teamA);
+
+    Member m1 = new Member("m1", 0, teamA);
+    Member m2 = new Member("m2", 0, teamA);
+    em.persist(m1);
+    em.persist(m2);
+
+    em.flush();
+    em.clear();
+
+    // when
+    // 아예 내용이 똑같은 객체를 전달해 해당 객체를 찾을 수 있다.
+    // 치명적인 단점! Join이 되긴 하는데,, Inner Join만 할 수 있다. (Outer Join 불가, 즉 Left Join 불가)
+    Member member = new Member("m1"); // Probe: 필드에 데이터가 있는 실제 도메인 객체
+    Team team = new Team("teamA"); // Probe
+    member.setTeam(team);
+
+    ExampleMatcher matcher = ExampleMatcher.matching()
+        .withIgnorePaths("age"); // field 값 무시
+
+    Example<Member> example = Example.of(member, matcher);
+
+    List<Member> result = memberRepository.findAll(example);
+
+    // then
+    assertThat(result.get(0).getUsername()).isEqualTo("m1");
   }
 }
