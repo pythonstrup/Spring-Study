@@ -18,6 +18,8 @@ import org.springframework.data.repository.query.Param;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.repository.custom.MemberCustomRepository;
+import study.datajpa.repository.projections.UsernameOnly;
+import study.datajpa.repository.projections.UsernameOnlyDto;
 
 // 구현체를 따로 만든 적이 없는데, 해당 객체를 어떻게 사용할 수 있는 걸까?
 // Spring Data JPA가 자바의 기본적인 프록시 기술로 가짜 객체를 만들어 주입해줬기 때문이다.
@@ -84,4 +86,11 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
   // select for update / 비관적락
   @Lock(LockModeType.PESSIMISTIC_WRITE)
   List<Member> findLockByUsername(String username);
+
+  // Projections
+  // 프로젝션 대상이 root 엔티티면 유용하지만.. root 엔티티를 넘어가는 순가 JPQL Select 최적화가 안된다.
+  // 따라서 실무의 복잡한 쿼리를 해결하기에는 한계가 있다. 단순할 때만 사용하는 것을 추천하고 복잡하면 QueryDSL을 사용하자.
+  List<UsernameOnly> findProjectionsByUsername(@Param("username") String username);
+  List<UsernameOnlyDto> findProjectionsDtoByUsername(@Param("username") String username);
+  <T> List<T> findProjectionGenericByUsername(@Param("username") String username, Class<T> type); // 동적 프로젝션
 }

@@ -23,6 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
+import study.datajpa.repository.projections.NestedClosedProjections;
+import study.datajpa.repository.projections.UsernameOnly;
+import study.datajpa.repository.projections.UsernameOnlyDto;
 
 @Transactional
 @SpringBootTest
@@ -407,7 +410,7 @@ class MemberRepositoryTest {
 
     // when
     // 아예 내용이 똑같은 객체를 전달해 해당 객체를 찾을 수 있다.
-    // 치명적인 단점! Join이 되긴 하는데,, Inner Join만 할 수 있다. (Outer Join 불가, 즉 Left Join 불가)
+    // 치명적인 단점! Join이 되긴 하는데,, Inner Join만 할 수 있다. (Outer Join 불가, 즉 Left Join 불ㅠㅛ)
     Member member = new Member("m1"); // Probe: 필드에 데이터가 있는 실제 도메인 객체
     Team team = new Team("teamA"); // Probe
     member.setTeam(team);
@@ -421,5 +424,103 @@ class MemberRepositoryTest {
 
     // then
     assertThat(result.get(0).getUsername()).isEqualTo("m1");
+  }
+
+  @Test
+  void projections() {
+    // given
+    Team teamA = new Team("teamA");
+    em.persist(teamA);
+
+    Member m1 = new Member("m1", 0, teamA);
+    Member m2 = new Member("m2", 0, teamA);
+    em.persist(m1);
+    em.persist(m2);
+
+    em.flush();
+    em.clear();
+
+    // when
+    List<UsernameOnly> usernameList = memberRepository.findProjectionsByUsername("m1");
+    for (UsernameOnly usernameOnly : usernameList) {
+      System.out.println("usernameOnly = " + usernameOnly.getUsername());
+    }
+
+    // then
+    assertThat(usernameList.size()).isEqualTo(1);
+  }
+
+  @Test
+  void projectionsByDto() {
+    // given
+    Team teamA = new Team("teamA");
+    em.persist(teamA);
+
+    Member m1 = new Member("m1", 0, teamA);
+    Member m2 = new Member("m2", 0, teamA);
+    em.persist(m1);
+    em.persist(m2);
+
+    em.flush();
+    em.clear();
+
+    // when
+    List<UsernameOnlyDto> usernameList = memberRepository.findProjectionsDtoByUsername("m1");
+    for (UsernameOnlyDto usernameOnly : usernameList) {
+      System.out.println("usernameOnly = " + usernameOnly.getUsername());
+    }
+
+    // then
+    assertThat(usernameList.size()).isEqualTo(1);
+  }
+
+  @Test
+  void projectionsByGeneric() {
+    // given
+    Team teamA = new Team("teamA");
+    em.persist(teamA);
+
+    Member m1 = new Member("m1", 0, teamA);
+    Member m2 = new Member("m2", 0, teamA);
+    em.persist(m1);
+    em.persist(m2);
+
+    em.flush();
+    em.clear();
+
+    // when
+    List<UsernameOnlyDto> usernameList = memberRepository.findProjectionGenericByUsername("m1", UsernameOnlyDto.class);
+    for (UsernameOnlyDto usernameOnly : usernameList) {
+      System.out.println("usernameOnly = " + usernameOnly.getUsername());
+    }
+
+    // then
+    assertThat(usernameList.size()).isEqualTo(1);
+  }
+
+  @Test
+  void nestedProjections() {
+    // given
+    Team teamA = new Team("teamA");
+    em.persist(teamA);
+
+    Member m1 = new Member("m1", 0, teamA);
+    Member m2 = new Member("m2", 0, teamA);
+    em.persist(m1);
+    em.persist(m2);
+
+    em.flush();
+    em.clear();
+
+    // when
+    List<NestedClosedProjections> nestedClosedProjections = memberRepository.findProjectionGenericByUsername("m1", NestedClosedProjections.class);
+    for (NestedClosedProjections nestedClosedProjection : nestedClosedProjections) {
+      System.out.println("nestedClosedProjection.getUsername() = " + nestedClosedProjection.getUsername());
+      System.out.println("nestedClosedProjection.getTeam() = " + nestedClosedProjection.getTeam());
+      System.out.println("nestedClosedProjection.getTeam().getName() = " + nestedClosedProjection.getTeam().getName());
+    }
+
+    // then
+    assertThat(nestedClosedProjections.size()).isEqualTo(1);
   }
 }
