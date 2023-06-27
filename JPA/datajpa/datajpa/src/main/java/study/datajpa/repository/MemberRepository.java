@@ -18,6 +18,7 @@ import org.springframework.data.repository.query.Param;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.repository.custom.MemberCustomRepository;
+import study.datajpa.repository.projections.MemberProjection;
 import study.datajpa.repository.projections.UsernameOnly;
 import study.datajpa.repository.projections.UsernameOnlyDto;
 
@@ -50,10 +51,13 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
   List<Member> findByNames(@Param("names") List<String> names);
 
   List<Member> findListByUsername(String username);
+
   Member findMemberByUsername(String username);
+
   Optional<Member> findOptionalByUsername(String username);
 
   Page<Member> findByAge(int age, Pageable pageable);
+
   Slice<Member> findSliceByAge(int age, Pageable pageable);
 
   // count 쿼리를 분리해 불필요한 Join을 줄여 성능을 향상시킬 수 있다!!
@@ -76,8 +80,9 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
   @Query("select m from Member m")
   List<Member> findMemberEntityGraph();
 
-//  @EntityGraph(attributePaths = {"team"})
-  @EntityGraph("Member.all") // Entity에서 직접 @NamedEntityGraph를 사용해 등록 가능!
+  //  @EntityGraph(attributePaths = {"team"})
+  @EntityGraph("Member.all")
+  // Entity에서 직접 @NamedEntityGraph를 사용해 등록 가능!
   List<Member> findEntityGraphByUsername(@Param("username") String username);
 
   @QueryHints(value = @QueryHint(name = "org.hibernate.readOnly", value = "true"))
@@ -91,6 +96,20 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
   // 프로젝션 대상이 root 엔티티면 유용하지만.. root 엔티티를 넘어가는 순가 JPQL Select 최적화가 안된다.
   // 따라서 실무의 복잡한 쿼리를 해결하기에는 한계가 있다. 단순할 때만 사용하는 것을 추천하고 복잡하면 QueryDSL을 사용하자.
   List<UsernameOnly> findProjectionsByUsername(@Param("username") String username);
+
   List<UsernameOnlyDto> findProjectionsDtoByUsername(@Param("username") String username);
-  <T> List<T> findProjectionGenericByUsername(@Param("username") String username, Class<T> type); // 동적 프로젝션
+
+  <T> List<T> findProjectionGenericByUsername(@Param("username") String username,
+      Class<T> type); // 동적 프로젝션
+
+  // Native Query
+  // 가급적 사용하지 않는 것이 좋다. 최후의 수단으로만 사용! 스프링 데이터 Projections을 사용하자.
+  @Query(value = "select * from member where username = ?", nativeQuery = true)
+  Member findByNativeQeury(String username);
+
+  @Query(value = "select m.member_id as id, m.username, t.name as teamName "
+      + "from member m left join team t ",
+      countQuery = "select count(*) from member",
+      nativeQuery = true)
+  Page<MemberProjection> findByNativeProjection(Pageable pageable);
 }
