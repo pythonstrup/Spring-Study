@@ -1,6 +1,7 @@
 package study.querydsl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static study.querydsl.entity.QMember.member;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -9,9 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import study.querydsl.entity.Hello;
 import study.querydsl.entity.Member;
-import study.querydsl.entity.QHello;
 import study.querydsl.entity.QMember;
 import study.querydsl.entity.Team;
 
@@ -22,8 +21,12 @@ public class QuerydslBasicTest {
   @PersistenceContext
   EntityManager em;
 
+  JPAQueryFactory queryFactory;
+
   @BeforeEach
   public void before() {
+    queryFactory = new JPAQueryFactory(em);
+
     Team teamA = new Team("teamA");
     Team teamB = new Team("teamB");
     em.persist(teamA);
@@ -53,13 +56,14 @@ public class QuerydslBasicTest {
 
   @Test
   void startQuerydsl() {
-    JPAQueryFactory queryFactory = new JPAQueryFactory(em);
-    QMember m = QMember.member;
+//    QMember member = new QMember("m");
+//    QMember member = QMember.member;
+    // 사실 그냥 스태틱 import 사용하는게 최고임
 
     Member findMember = queryFactory
-        .select(m)
-        .from(m)
-        .where(m.username.eq("member1"))
+        .select(member)
+        .from(member)
+        .where(member.username.eq("member1"))
         .fetchOne();
 
     assertThat(findMember.getUsername()).isEqualTo("member1");
