@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import study.querydsl.entity.Member;
-import study.querydsl.entity.QMember;
 import study.querydsl.entity.Team;
 
 @SpringBootTest
@@ -64,6 +63,47 @@ public class QuerydslBasicTest {
         .select(member)
         .from(member)
         .where(member.username.eq("member1"))
+        .fetchOne();
+
+    assertThat(findMember.getUsername()).isEqualTo("member1");
+  }
+
+  @Test
+  void search() {
+    Member findMember = queryFactory
+        .selectFrom(member)
+        .where(member.username.eq("member1")
+            .and(member.age.eq(10)))
+        .fetchOne();
+
+    assertThat(findMember.getUsername()).isEqualTo("member1");
+    assertThat(findMember.getAge()).isEqualTo(10);
+
+    // 검색조건
+    // member.username.eq("member1") => username = 'member1'
+    // member.username.ne("member1") => username != 'member1'
+    // member.username.eq("member1").not() => username != 'member1'
+    // member.username.isNotNull() => username IS NOT NULL
+    // member.age.in(10, 20) => age in (10, 20)
+    // member.age.notIn(10, 20) => age not in (10, 20)
+    // member.age.between(10, 30) => age between 10 and 30
+    // member.age.goe(30) => age >= 30
+    // member.age.gt(30) => age > 30
+    // member.age.loe(30) => age <= 30
+    // member.age.lt(30) => age < 30
+    // member.username.like("member%") => username like 'member%'
+    // member.username.contains("member") => username like '%member%'
+    // member.username.startsWith("member") => username like 'member%'
+  }
+
+  @Test
+  void searchAndParam() {
+    Member findMember = queryFactory
+        .selectFrom(member)
+        .where(
+            member.username.eq("member1"),
+            member.age.eq(10)
+        ) // .and가 아닌 그냥 ,로 묶는 방법 => 결과는 똑같다.
         .fetchOne();
 
     assertThat(findMember.getUsername()).isEqualTo("member1");
