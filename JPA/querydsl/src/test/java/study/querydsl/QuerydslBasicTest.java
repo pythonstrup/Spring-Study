@@ -3,7 +3,7 @@ package study.querydsl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static study.querydsl.entity.QMember.member;
 
-import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -165,5 +165,37 @@ public class QuerydslBasicTest {
     assertThat(member5.getUsername()).isEqualTo("member5");
     assertThat(member6.getUsername()).isEqualTo("member6");
     assertThat(memberNull.getUsername()).isNull();
+  }
+
+  @Test
+  public void paging1() {
+    List<Member> result = queryFactory
+        .selectFrom(member)
+        .orderBy(member.username.desc())
+        .offset(1)
+        .limit(2)
+        .fetch();
+
+    assertThat(result.size()).isEqualTo(2);
+  }
+
+  @Test
+  public void paging2() {
+    // 페이징할 때, fetchResults() 대신 아래의 코드를 사용하는 것을 추천
+    List<Member> result = queryFactory
+        .selectFrom(member)
+        .orderBy(member.username.desc())
+        .offset(1)
+        .limit(2)
+        .fetch();
+
+    Long totalCount = queryFactory
+        .select(Wildcard.count)
+        .from(member)
+        .fetch().get(0);
+
+    assertThat(totalCount).isEqualTo(4);
+    assertThat(result.size()).isEqualTo(2);
+    assertThat(result);
   }
 }
