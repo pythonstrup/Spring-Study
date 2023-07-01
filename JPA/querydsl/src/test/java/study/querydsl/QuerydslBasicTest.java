@@ -3,9 +3,11 @@ package study.querydsl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static study.querydsl.entity.QMember.member;
 
+import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,7 +45,7 @@ public class QuerydslBasicTest {
   }
 
   @Test
-  void startJPQL() {
+  public void startJPQL() {
     // member1 찾기
     String qlString = "select m from Member m where m.username = :username";
     Member findMember = em.createQuery(qlString, Member.class)
@@ -54,7 +56,7 @@ public class QuerydslBasicTest {
   }
 
   @Test
-  void startQuerydsl() {
+  public void startQuerydsl() {
 //    QMember member = new QMember("m");
 //    QMember member = QMember.member;
     // 사실 그냥 스태틱 import 사용하는게 최고임
@@ -69,7 +71,7 @@ public class QuerydslBasicTest {
   }
 
   @Test
-  void search() {
+  public void search() {
     Member findMember = queryFactory
         .selectFrom(member)
         .where(member.username.eq("member1")
@@ -97,7 +99,7 @@ public class QuerydslBasicTest {
   }
 
   @Test
-  void searchAndParam() {
+  public void searchAndParam() {
     Member findMember = queryFactory
         .selectFrom(member)
         .where(
@@ -107,5 +109,37 @@ public class QuerydslBasicTest {
         .fetchOne();
 
     assertThat(findMember.getUsername()).isEqualTo("member1");
+  }
+
+  @Test
+  public void resultFetch() {
+    List<Member> fetch = queryFactory
+        .selectFrom(member)
+        .fetch();
+
+    Member fetchOne = queryFactory
+        .selectFrom(member)
+        .where(member.username.eq("member1" ))
+        .fetchOne();
+
+    Member fetchFirst = queryFactory
+        .selectFrom(member)
+        .fetchFirst();
+
+    // 사용하지 말자.
+    // Deprecated!!
+//    QueryResults<Member> queryResults = queryFactory
+//        .selectFrom(member)
+//        .fetchResults();
+//    long totalCount = queryResults.getTotal();
+//    List<Member> results = queryResults.getResults();
+//    assertThat(totalCount).isEqualTo(4);
+//    assertThat(results.get(0).getUsername()).isEqualTo("member1");
+
+    // Deprecated
+//    long count = queryFactory
+//        .selectFrom(member)
+//        .fetchCount();
+//    assertThat(count).isEqualTo(4);
   }
 }

@@ -39,6 +39,10 @@ dependencies {
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
 }
 
+test {
+    useJUnitPlatform()
+}
+
 // === Querydsl 빌드 옵션 ===
 def querydslDir = "$buildDir/generated/querydsl"
 
