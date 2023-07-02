@@ -2,7 +2,9 @@ package study.querydsl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static study.querydsl.entity.QMember.member;
+import static study.querydsl.entity.QTeam.team;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -197,5 +199,51 @@ public class QuerydslBasicTest {
     assertThat(totalCount).isEqualTo(4);
     assertThat(result.size()).isEqualTo(2);
     assertThat(result);
+  }
+
+  @Test
+  public void aggregation() {
+    List<Tuple> result = queryFactory
+        .select(
+            member.count(),
+            member.age.sum(),
+            member.age.avg(),
+            member.age.max(),
+            member.age.min()
+        )
+        .from(member)
+        .fetch();
+
+    // 실무에서는 튜플보다는 dto를 사용해 정보를 뽑아온다.
+    Tuple tuple = result.get(0);
+    System.out.println("tuple = " + tuple);
+
+    assertThat(tuple.get(member.count())).isEqualTo(4);
+    assertThat(tuple.get(member.age.sum())).isEqualTo(100);
+    assertThat(tuple.get(member.age.avg())).isEqualTo(25);
+    assertThat(tuple.get(member.age.max())).isEqualTo(40);
+    assertThat(tuple.get(member.age.min())).isEqualTo(10);
+  }
+
+  /**
+   * 팀의 이름과 각 팀의 평균 연령
+   */
+  @Test
+  void group() throws Exception {
+    List<Tuple> result = queryFactory
+        .select(team.name, member.age.avg())
+        .from(member)
+        .join(member.team, team)
+        .groupBy(team.name)
+        .fetch();
+
+    Tuple teamA = result.get(0);
+    Tuple teamB = result.get(1);
+
+    assertThat(teamA.get(team.name)).isEqualTo("teamA");
+    assertThat(teamA.get(member.age.avg())).isEqualTo(15);
+
+    assertThat(teamB.get(team.name)).isEqualTo("teamB");
+    assertThat(teamB.get(member.age.avg())).isEqualTo(35);
   }
 }
