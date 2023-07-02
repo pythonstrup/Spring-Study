@@ -279,4 +279,57 @@ public class QuerydslBasicTest {
         .extracting("username")
         .containsExactly("teamA", "teamB");
   }
+
+  /**
+   * 회원은 모두 조회 => 회원과 팀을 조인할 때 팀 이름이 teamA인 팀만 조인
+   * JPQL: select m, t from Member m left join m.team t on t.name = 'teamA'
+   */
+  @Test
+  void joinOnFiltering() {
+    // on절은 outer join을 할 때 사용하는 것이 좋다.
+
+    // left join
+//    List<Tuple> result = queryFactory
+//        .select(member, team)
+//        .from(member)
+//        .leftJoin(member.team, team)
+//          .on(team.name.eq("teamA"))
+//        .fetch();
+
+    // inner join = on보다는 where로 처리하자.
+    List<Tuple> result = queryFactory
+        .select(member, team)
+        .from(member)
+//        .join(member.team, team)
+//          .on(team.name.eq("teamA"))
+        .join(member.team, team)
+        .where(team.name.eq("teamA")) // 위의 on절의 결과와 똑같다.
+        .fetch();
+
+    for (Tuple tuple : result) {
+      System.out.println("tuple = " + tuple);
+    }
+  }
+
+  /**
+   * 연관관계가 없는 엔티티 외부조인
+   * 회원의 이름 = 팀 이름
+   */
+  @Test
+  void joinOnNoRelation() {
+    em.persist(new Member("teamA"));
+    em.persist(new Member("teamB"));
+    em.persist(new Member("teamC"));
+
+    List<Tuple> result = queryFactory
+        .select(member, team)
+        .from(member)
+//        .leftJoin(team).on(member.username.eq(team.name))
+        .join(team).on(member.username.eq(team.name))
+        .fetch();
+
+    for (Tuple tuple : result) {
+      System.out.println("tuple = " + tuple);
+    }
+  }
 }
