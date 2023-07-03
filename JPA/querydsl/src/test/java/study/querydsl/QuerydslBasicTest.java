@@ -7,6 +7,7 @@ import static study.querydsl.entity.QTeam.team;
 
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -473,6 +474,35 @@ public class QuerydslBasicTest {
             .when(member.age.between(21, 30)).then("21~30")
             .otherwise("etc")
         ).from(member)
+        .fetch();
+
+    for (String s : result) {
+      System.out.println("s = " + s);
+    }
+  }
+
+  // 상수 넣어주기
+  @Test
+  void constant() {
+    List<Tuple> result = queryFactory
+        .select(member.username, Expressions.constant("A"))
+        .from(member)
+        .fetch();
+
+    for (Tuple tuple : result) {
+      System.out.println("tuple = " + tuple);
+    }
+  }
+
+  @Test
+  void concat() {
+    // {username}_{age}
+    // age가 문자가 아니기 때문에 문자열로 변환이 필요!
+    // 이 방법은 특히 ENUM을 처리할 때 자주 사용된다!!
+    List<String> result = queryFactory
+        .select(member.username.concat("_").concat(member.age.stringValue()))
+        .from(member)
+//        .where(member.username.eq("member1"))
         .fetch();
 
     for (String s : result) {
