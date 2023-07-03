@@ -8,7 +8,9 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceUnit;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,9 @@ public class QuerydslBasicTest {
 
   @PersistenceContext
   EntityManager em;
+
+  @PersistenceUnit
+  EntityManagerFactory emf;
 
   JPAQueryFactory queryFactory;
 
@@ -331,5 +336,34 @@ public class QuerydslBasicTest {
     for (Tuple tuple : result) {
       System.out.println("tuple = " + tuple);
     }
+  }
+
+  @Test
+  void fetchJoinNo() {
+    em.flush();
+    em.clear();
+
+    Member findMember = queryFactory
+        .selectFrom(member)
+        .where(member.username.eq("member1"))
+        .fetchOne();
+
+    boolean loaded = emf.getPersistenceUnitUtil().isLoaded(findMember.getTeam());
+    assertThat(loaded).as("fetch join 미적용").isFalse();
+  }
+
+  @Test
+  void fetchJoinUse() {
+    em.flush();
+    em.clear();
+
+    Member findMember = queryFactory
+        .selectFrom(member)
+        .join(member.team, team).fetchJoin()
+        .where(member.username.eq("member1"))
+        .fetchOne();
+
+    boolean loaded = emf.getPersistenceUnitUtil().isLoaded(findMember.getTeam());
+    assertThat(loaded).as("fetch join 적용").isTrue();
   }
 }
