@@ -6,9 +6,12 @@ import static study.querydsl.entity.QMember.member;
 import static study.querydsl.entity.QTeam.team;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.Wildcard;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -19,6 +22,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import study.querydsl.dto.MemberDto;
+import study.querydsl.dto.UserDto;
 import study.querydsl.entity.Member;
 import study.querydsl.entity.QMember;
 import study.querydsl.entity.Team;
@@ -534,6 +539,141 @@ public class QuerydslBasicTest {
       Integer age = tuple.get(member.age);
       System.out.println("username = " + username);
       System.out.println("age = " + age);
+    }
+  }
+
+  // JPQL로 작성하면 생성자 방식만 지원하기 때문에 new를 사용해야하고,
+  // 패키지 명을 전부 적어줘야 한다..
+  @Test
+  void findDtoByJPQL() {
+    List<MemberDto> result = em.createQuery(
+            "select new study.querydsl.dto.MemberDto(m.username, m.age) from Member m", MemberDto.class)
+        .getResultList();
+
+    for (MemberDto memberDto : result) {
+      System.out.println("memberDto = " + memberDto);
+    }
+  }
+
+  /**
+   * QueryDSL로 DTO 조회하기
+   */
+
+  @Test
+  void findDtoBySetter() {
+    // Setter를 이용한 방식
+    // 기본생성자가 필요한 방식이다.
+    List<MemberDto> result = queryFactory
+        .select(
+            Projections.bean(
+                MemberDto.class,
+                member.username,
+                member.age
+            )
+        ).from(member)
+        .fetch();
+
+    for (MemberDto memberDto : result) {
+      System.out.println("memberDto = " + memberDto);
+    }
+  }
+
+  @Test
+  void findDtoByField() {
+    // 객체의 필드값에 값을 넣어주는 방식
+    // 생성자도 Setter 도 필요 없다. => 그럼 어떻게 하는거지? 리플렉션인가?
+    List<MemberDto> result = queryFactory
+        .select(
+            Projections.fields(
+                MemberDto.class,
+                member.username,
+                member.age
+            )
+        ).from(member)
+        .fetch();
+
+    for (MemberDto memberDto : result) {
+      System.out.println("memberDto = " + memberDto);
+    }
+  }
+
+  @Test
+  void findDtoByConstructor() {
+    // 생성자를 사용하는 방식
+    // 생성자 파라미터의 인자와 일치하지 않으면 에러가 발생한다.
+    List<MemberDto> result = queryFactory
+        .select(
+            Projections.constructor(
+                MemberDto.class,
+                member.username,
+                member.age
+            )
+        ).from(member)
+        .fetch();
+
+    for (MemberDto memberDto : result) {
+      System.out.println("memberDto = " + memberDto);
+    }
+  }
+
+  @Test
+  void findUserDto1() {
+    // 필드로 가져오려고 할 때 필드명이 일치하지 않는다면?
+    List<UserDto> result = queryFactory
+        .select(
+            Projections.fields(
+                UserDto.class,
+                member.username.as("name"),
+                member.age
+            )
+        ).from(member)
+        .fetch();
+
+    for (UserDto userDto : result) {
+      System.out.println("userDto = " + userDto);
+    }
+  }
+
+  @Test
+  void findUserDto2() {
+    // 서브 쿼리를 사용하는 방법
+    // ExpressionUtils.as 사용
+    QMember memberSub = new QMember("memberSub");
+
+    List<UserDto> result = queryFactory
+        .select(
+            Projections.fields(
+                UserDto.class,
+                ExpressionUtils.as(member.username, "name"), // 서브쿼리가 아닌 필드에서도 사용이 가능하다.
+                ExpressionUtils.as( // 서브쿼리는 다른 방법이 없음.
+                    JPAExpressions
+                        .select(memberSub.age.max())
+                        .from(memberSub), "age")
+            )
+        ).from(member)
+        .fetch();
+
+    for (UserDto userDto : result) {
+      System.out.println("userDto = " + userDto);
+    }
+  }
+
+  @Test
+  void findUserDto3() {
+    // 생성자를 사용하는 방식
+    // 필드명이 달라도 타입만 같으면 문제없다.
+    List<UserDto> result = queryFactory
+        .select(
+            Projections.constructor(
+                UserDto.class,
+                member.username,
+                member.age
+            )
+        ).from(member)
+        .fetch();
+
+    for (UserDto userDto : result) {
+      System.out.println("userDto = " + userDto);
     }
   }
 }
