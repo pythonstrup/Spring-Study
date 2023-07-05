@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static study.querydsl.entity.QMember.member;
 import static study.querydsl.entity.QTeam.team;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
@@ -696,5 +697,38 @@ public class QuerydslBasicTest {
     // Q-File을 생성해줘야한다.
     // DTO가 QueryDSL에 의존성을 가지게 되어버린다. => 예를 들어, QueryDSL 라이브러리를 뺏을 때 DTO에서도 문제가 생긴다는 얘기다.
     // DTO는 Controller, Service, Repository 가리지 않고 모든 곳에서 사용되는 중요한 요소인데, 해당 어노테이션으로 인해 순수하지 않은 객체가 되어버릴 수 있다.
+  }
+
+
+  /**
+   * 동적쿼리
+   */
+  @Test
+  void dynamicQuery_BooleanBuilder() {
+    String usernameParam = "member1";
+//    Integer ageParam = 10;
+    Integer ageParam = null;
+
+    List<Member> result = searchMember1(usernameParam, ageParam);
+    for (Member memberEntity : result) {
+      System.out.println("memberEntity = " + memberEntity);
+    }
+    assertThat(result.size()).isEqualTo(1);
+  }
+
+  private List<Member> searchMember1(String usernameCond, Integer ageCond) {
+    BooleanBuilder builder = new BooleanBuilder();
+    if (usernameCond != null) {
+      builder.and(member.username.eq(usernameCond));
+    }
+
+    if (ageCond != null) {
+      builder.and(member.age.eq(ageCond));
+    }
+
+    return queryFactory
+        .selectFrom(member)
+        .where(builder)
+        .fetch();
   }
 }
