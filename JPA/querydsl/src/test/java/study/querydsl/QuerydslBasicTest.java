@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import study.querydsl.dto.MemberDto;
+import study.querydsl.dto.QMemberDto;
 import study.querydsl.dto.UserDto;
 import study.querydsl.entity.Member;
 import study.querydsl.entity.QMember;
@@ -675,5 +676,25 @@ public class QuerydslBasicTest {
     for (UserDto userDto : result) {
       System.out.println("userDto = " + userDto);
     }
+  }
+
+  @Test
+  void findDtoByQueryProjection() {
+    // 이 방법을 사용하려면?
+    // 해당 DTO의 생성자 상단에 @QeuryProjection 어노테이션을 추가하고 gradle에서 compileJava를 해준다.
+    // Projection.constructor는 파라미터를 잘 못넣었을 때, 컴파일 단계에서 오류를 잡지 못하고 런타임에서 에러가 터진다. (타입, 파라미터 갯수 문제 등)
+    // 반면 @QueryProjection 방식은 컴파일 타임에 에러를 잡아준다는 장점이 있다.
+    List<MemberDto> result = queryFactory
+        .select(new QMemberDto(member.username, member.age))
+        .from(member)
+        .fetch();
+
+    for (MemberDto memberDto : result) {
+      System.out.println("memberDto = " + memberDto);
+    }
+    // 단점
+    // Q-File을 생성해줘야한다.
+    // DTO가 QueryDSL에 의존성을 가지게 되어버린다. => 예를 들어, QueryDSL 라이브러리를 뺏을 때 DTO에서도 문제가 생긴다는 얘기다.
+    // DTO는 Controller, Service, Repository 가리지 않고 모든 곳에서 사용되는 중요한 요소인데, 해당 어노테이션으로 인해 순수하지 않은 객체가 되어버릴 수 있다.
   }
 }
