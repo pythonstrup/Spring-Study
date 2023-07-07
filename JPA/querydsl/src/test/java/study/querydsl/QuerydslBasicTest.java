@@ -23,6 +23,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import study.querydsl.dto.MemberDto;
 import study.querydsl.dto.QMemberDto;
@@ -757,5 +758,40 @@ public class QuerydslBasicTest {
 
   private BooleanExpression allEq(String usernameCond, Integer ageCond) {
     return usernameEq(usernameCond).and(ageEq(ageCond));
+  }
+
+  /**
+   * 벌크연산
+   */
+  @Test
+  void bulkUpdate() {
+    long count = queryFactory
+        .update(member)
+        .set(member.username, "비회원")
+        .where(member.age.lt(28))
+        .execute();
+
+    // 주의해야할 점
+    // 벌크연산을 하면 영속성 컨텍스트를 무시하고 DB에 영향을 주기 때문에 DB의 값과 영속성 컨텍스트의 값의 괴리가 생긴다.
+    // 벌크연산을 실행하고 나면 꼭 영속성 컨텍스트를 초기화해줘야한다.
+    em.flush();
+    em.clear();
+  }
+
+  @Test
+  void bulkAdd() {
+    long count = queryFactory
+        .update(member)
+//        .set(member.age, member.age.add(1))
+        .set(member.age, member.age.add(-1))
+        .execute();
+  }
+
+  @Test
+  void bulkDelete() {
+    long count = queryFactory
+        .delete(member)
+        .where(member.age.gt(18))
+        .execute();
   }
 }
