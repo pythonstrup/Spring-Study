@@ -44,7 +44,7 @@ test {
 }
 
 // === Querydsl 빌드 옵션 ===
-def querydslDir = "$buildDir/generated/querydsl"
+def querydslDir = "src/main/generated"
 
 // java source set에 querydsl QClass 위치 추가
 sourceSets {
