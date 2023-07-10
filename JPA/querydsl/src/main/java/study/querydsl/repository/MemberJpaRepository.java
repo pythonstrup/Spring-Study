@@ -105,7 +105,9 @@ public class MemberJpaRepository {
         .where(
             usernameEq(condition.getUsername()),
             teamNameEq(condition.getTeamName()),
-            ageBetween(condition.getAgeLoe(), condition.getAgeGoe())
+            ageLoe(condition.getAgeLoe()),
+            ageGoe(condition.getAgeGoe())
+//            ageBetween(condition.getAgeLoe(), condition.getAgeGoe()) // 이렇게 묶어줄 수도 있다.
         )
         .fetch();
   }
