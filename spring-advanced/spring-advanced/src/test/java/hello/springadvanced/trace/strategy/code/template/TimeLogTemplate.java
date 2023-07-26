@@ -1,6 +1,5 @@
 package hello.springadvanced.trace.strategy.code.template;
 
-import hello.springadvanced.trace.strategy.code.strategy.Strategy;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
