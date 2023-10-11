@@ -3,6 +3,7 @@ package hello.proxy.proxyfactory;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import hello.proxy.common.advice.TimeAdvice;
+import hello.proxy.common.service.ConcreteService;
 import hello.proxy.common.service.ServiceImpl;
 import hello.proxy.common.service.ServiceInterface;
 import lombok.extern.slf4j.Slf4j;
@@ -30,4 +31,23 @@ public class ProxyFactoryTest {
     assertThat(AopUtils.isJdkDynamicProxy(proxy)).isTrue();
     assertThat(AopUtils.isCglibProxy(proxy)).isFalse();
   }
+
+  @Test
+  @DisplayName("구체클래스만 있으면 CGLIB 사용")
+  void concreteProxy() {
+    ConcreteService target = new ConcreteService();
+    ProxyFactory proxyFactory = new ProxyFactory(target);
+    proxyFactory.addAdvice(new TimeAdvice());
+    ConcreteService proxy = (ConcreteService) proxyFactory.getProxy();
+    log.info("targetClass={}", target.getClass());
+    log.info("proxyClass={}", proxy.getClass());
+
+    proxy.call();
+
+    assertThat(AopUtils.isAopProxy(proxy)).isTrue();
+    assertThat(AopUtils.isJdkDynamicProxy(proxy)).isFalse();
+    assertThat(AopUtils.isCglibProxy(proxy)).isTrue();
+  }
+
+
 }
