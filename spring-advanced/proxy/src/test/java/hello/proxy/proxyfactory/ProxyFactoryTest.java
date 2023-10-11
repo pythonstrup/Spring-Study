@@ -49,5 +49,21 @@ public class ProxyFactoryTest {
     assertThat(AopUtils.isCglibProxy(proxy)).isTrue();
   }
 
+  @Test
+  @DisplayName("ProxyTargetClass 옵션을 사용하면 인터페이스가 있어도 CGLIB를 사용하고, 클래스 기반 프록시 사용")
+  void proxyTargetClass() {
+    ServiceInterface target = new ServiceImpl();
+    ProxyFactory proxyFactory = new ProxyFactory(target);
+    proxyFactory.setProxyTargetClass(true); // 구체클래스인 ServiceImpl를 사용해버림
+    proxyFactory.addAdvice(new TimeAdvice());
+    ServiceInterface proxy = (ServiceInterface) proxyFactory.getProxy();
+    log.info("targetClass={}", target.getClass());
+    log.info("proxyClass={}", proxy.getClass());
 
+    proxy.save();
+
+    assertThat(AopUtils.isAopProxy(proxy)).isTrue();
+    assertThat(AopUtils.isJdkDynamicProxy(proxy)).isFalse();
+    assertThat(AopUtils.isCglibProxy(proxy)).isTrue();
+  }
 }
