@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.NoSuchElementException;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -37,6 +38,35 @@ public class MemberRepositoryV0 {
 //      pstmt.close(); // Exception이 터지면 밑의 코드가 실행되지 않는다. => try-catch로 묶어줘야 한다.
 //      conn.close();
       close(conn, pstmt, null);
+    }
+  }
+
+  public Member findById(String memberId) throws SQLException {
+    String sql = "select * from member where member_id = ?";
+
+    Connection conn = null;
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
+
+    try {
+      conn = getConnection();
+      pstmt = conn.prepareStatement(sql);
+      pstmt.setString(1, memberId);
+
+      rs = pstmt.executeQuery();
+      if (rs.next()) {
+        Member member = new Member();
+        member.setMemberId(rs.getString("member_Id"));
+        member.setMoney(rs.getInt("money"));
+        return member;
+      } else  {
+        throw new NoSuchElementException("member not found memberId=" + memberId);
+      }
+    } catch (SQLException e) {
+      log.info("db error", e);
+      throw e;
+    } finally {
+      close(conn, pstmt, rs);
     }
   }
 
