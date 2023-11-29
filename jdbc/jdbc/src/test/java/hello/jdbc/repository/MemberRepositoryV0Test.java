@@ -1,9 +1,10 @@
 package hello.jdbc.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import hello.jdbc.domain.Member;
 import java.sql.SQLException;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
@@ -22,6 +23,11 @@ class MemberRepositoryV0Test {
     log.info("findMember={}", findMember);
     log.info("member == findMember {}", member == findMember);
     log.info("member equals findMember {}", member.equals(findMember));
-    Assertions.assertThat(findMember).isEqualTo(member);
+    assertThat(findMember).isEqualTo(member);
+
+    // update: money 10000 -> 20000
+    repository.update(member.getMemberId(), 20000);
+    Member updatedMember = repository.findById(member.getMemberId());
+    assertThat(updatedMember.getMoney()).isEqualTo(20000);
   }
 }
