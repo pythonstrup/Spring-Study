@@ -28,3 +28,5 @@ spring:
   batch:
     jdbc:
       initialize-schema: always # 개발할 때는 always 사용 / 운영에서는 never 사용
+    job:
+      enabled: false # 자동 실행 안되게 설정
