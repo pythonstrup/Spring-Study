@@ -2,14 +2,12 @@ package hello.itemservice;
 
 import hello.itemservice.config.JdbcTemplateV3Config;
 import hello.itemservice.repository.ItemRepository;
-import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Slf4j
 //@Import(MemoryConfig.class)
@@ -19,16 +17,17 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 @SpringBootApplication(scanBasePackages = "hello.itemservice.web")
 public class ItemServiceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ItemServiceApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(ItemServiceApplication.class, args);
+  }
 
-	@Bean
-	@Profile("local")
-	public TestDataInit testDataInit(ItemRepository itemRepository) {
-		return new TestDataInit(itemRepository);
-	}
+  @Bean
+  @Profile("local")
+  public TestDataInit testDataInit(ItemRepository itemRepository) {
+    return new TestDataInit(itemRepository);
+  }
 
+/* 사실 설정해주지 않아도 Spring Boot에서 자동으로 메모리 DB를 띄워준다.
 	@Bean
 	@Profile("test")
 	public DataSource dataSource() {
@@ -37,7 +36,8 @@ public class ItemServiceApplication {
 		dataSource.setDriverClassName("org.h2.Driver");
 		dataSource.setUrl("jdbc:h2:mem:db;DB_CLOSE_DELAY=-1"); // 메모리 모드로 띄우기
 		dataSource.setUsername("sa");
-//		dataSource.setPassword("");
+		dataSource.setPassword("");
 		return dataSource;
 	}
+	*/
 }
