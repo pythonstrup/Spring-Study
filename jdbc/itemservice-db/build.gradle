@@ -28,6 +28,9 @@ dependencies {
 	// JDBC
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 
+	// MyBatis - 스프링이 버전 관리를 따로 해주지 않는다. 버전 명시필요! (명시를 안하면 다운로드 안된다.)
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+
 	// H2 DATABASE
 	runtimeOnly 'com.h2database:h2'
 
