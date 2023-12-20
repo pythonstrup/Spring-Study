@@ -18,4 +18,7 @@ public interface ItemMapper {
   Optional<Item> findById(Long id);
 
   List<Item> findAll(ItemSearchCond itemSearch);
+  // 동적 쿼리를 작성할 때 부등호는 그냥 적을 수 없다. 아래와 같이 적어줘야한다.
+  // and price &lt;= #{maxPrice}
+  // and price <![CDATA[<=]]> #{maxPrice}
 }

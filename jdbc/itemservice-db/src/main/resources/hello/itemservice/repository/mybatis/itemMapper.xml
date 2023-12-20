@@ -30,7 +30,6 @@
         and item_name like concat('%', #{itemName}, '%')
       </if>
       <if test="maxPrice != null">
-#         and prcie $lt;= #{maxPrice}
         and price <![CDATA[<=]]> #{maxPrice}
       </if>
     </where>
