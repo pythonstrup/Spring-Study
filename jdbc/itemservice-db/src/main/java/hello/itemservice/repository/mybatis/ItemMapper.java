@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface ItemMapper {
@@ -15,6 +16,8 @@ public interface ItemMapper {
 
   void update(@Param("id") Long id, @Param("updateParam") ItemUpdateDto updateParam);
 
+  // XML 대신 아래와 같이 어노테이션을 사용할 수 있지만 거의 사용하지 않는다고 함.
+  @Select("select id, item_name, price, quantity from item where id=#{id}")
   Optional<Item> findById(Long id);
 
   List<Item> findAll(ItemSearchCond itemSearch);
