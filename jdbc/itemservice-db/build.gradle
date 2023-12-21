@@ -26,10 +26,14 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	// JDBC
-	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+//	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 
 	// MyBatis - 스프링이 버전 관리를 따로 해주지 않는다. 버전 명시필요! (명시를 안하면 다운로드 안된다.)
+	// JDBC 포함하고 있다.
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+
+	// JPA, Spring Data JPA => JDBC를 포함하고 있다.
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
 	// H2 DATABASE
 	runtimeOnly 'com.h2database:h2'
