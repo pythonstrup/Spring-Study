@@ -1,7 +1,9 @@
 package com.pythonstrup.ddd.common.model;
 
 import java.util.Objects;
+import lombok.Getter;
 
+@Getter
 public class Money {
 
   private int value;
@@ -10,8 +12,8 @@ public class Money {
     this.value = value;
   }
 
-  public int getValue() {
-    return value;
+  public Money add(Money money) {
+    return new Money(this.value + money.value);
   }
 
   public Money multiply(int multiplier) {

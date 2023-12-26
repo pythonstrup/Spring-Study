@@ -5,14 +5,18 @@ import java.util.List;
 
 public class Order {
 
+  private OrderNo number;
   private OrderState state;
   private ShippingInfo shippingInfo;
+  private Orderer orderer;
   private List<OrderLine> orderLineList;
   private Money totalAmounts;
 
-  public Order(ShippingInfo shippingInfo, List<OrderLine> orderLineList) {
+  public Order(Orderer orderer, ShippingInfo shippingInfo, List<OrderLine> orderLineList, OrderState state) {
+    setOrderer(orderer);
     setOrderLineList(orderLineList);
     setShippingInfo(shippingInfo);
+    this.state = state;
   }
 
   public void changeShippingInfo(ShippingInfo newShippingInfo) {
@@ -52,8 +56,33 @@ public class Order {
 
   private void calculateTotalAmounts() {
     int sum = orderLineList.stream()
-        .mapToInt(x -> x.getAmounts())
+        .mapToInt(x -> x.getAmounts().getValue())
         .sum();
     this.totalAmounts = new Money(sum);
+  }
+
+  private void setOrderer(Orderer orderer) {
+    if (orderer == null) throw new IllegalArgumentException("no orderer");
+    this.orderer = orderer;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Order order = (Order) o;
+    return number.equals(order.number);
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((number == null)? 0: number.hashCode());
+    return result;
   }
 }
