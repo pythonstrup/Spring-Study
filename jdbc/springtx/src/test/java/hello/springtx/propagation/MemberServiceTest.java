@@ -3,6 +3,7 @@ package hello.springtx.propagation;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,5 +32,24 @@ class MemberServiceTest {
     // then: 모든 데이터가 정상 저장
     assertTrue(memberRepository.find(username).isPresent());
     assertTrue(logRepository.find(username).isPresent());
+  }
+
+  /**
+   * memberService    @Transactional: OFF
+   * memberRepository @Transactional: ON
+   * logRepository    @Transactional: ON Exception
+   */
+  @Test
+  void outerTxOff_fail() {
+    // given
+    String username = "로그예외_outerTxOff_fail";
+
+    // when
+    Assertions.assertThatThrownBy(() -> memberService.joinV1(username))
+        .isInstanceOf(RuntimeException.class);
+
+    // then: 로그만 롤백되어 있어야한다.
+    assertTrue(memberRepository.find(username).isPresent());
+    assertTrue(logRepository.find(username).isEmpty());
   }
 }
