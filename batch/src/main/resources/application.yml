@@ -28,5 +28,5 @@ spring:
   batch:
     jdbc:
       initialize-schema: always # 개발할 때는 always 사용 / 운영에서는 never 사용
-    job:
-      enabled: false # 자동 실행 안되게 설정 (true로 되어 있을 경우, 스프링 부트 시작시 등록되어 있는 job들이 실행된다.)
+#    job:
+#      enabled: false # 자동 실행 안되게 설정 (true로 되어 있을 경우, 스프링 부트 시작시 등록되어 있는 job들이 실행된다.)

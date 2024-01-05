@@ -1,4 +1,4 @@
-package com.spring.batch.config;
+package com.spring.batch.config.job;
 
 import java.util.Date;
 import java.util.Map;
@@ -16,14 +16,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Slf4j
-@Configuration
+//@Configuration
 @RequiredArgsConstructor
-public class JobConfiguration {
+public class JobParameterConfiguration {
 
   private final JobBuilderFactory jobBuilderFactory;
   private final StepBuilderFactory stepBuilderFactory;
 
-  @Bean
+//  @Bean
   public Job job() {
     return jobBuilderFactory.get("job")
         .start(step1())
@@ -31,9 +31,27 @@ public class JobConfiguration {
         .build();
   }
 
-  @Bean
+//  @Bean
   public Step step1() {
     return stepBuilderFactory.get("step1")
+        .tasklet((contribution, chunkContext) -> {
+          System.out.println("step1 was executed");
+          return RepeatStatus.FINISHED;
+        }).build();
+  }
+
+//  @Bean
+  public Step step2() {
+    return stepBuilderFactory.get("step2")
+        .tasklet((contribution, chunkContext) -> {
+          System.out.println("step2 was executed");
+          return RepeatStatus.FINISHED;
+        }).build();
+  }
+
+//    @Bean
+  public Step jobParameters() {
+    return stepBuilderFactory.get("jobParameters")
         .tasklet((StepContribution contribution, ChunkContext chunkContext) -> {
 
           JobParameters jobParameters = contribution.getStepExecution().getJobExecution().getJobParameters();
@@ -51,15 +69,6 @@ public class JobConfiguration {
           jobParametersMap.get("age");
 
           System.out.println("step1 was executed");
-          return RepeatStatus.FINISHED;
-        }).build();
-  }
-
-  @Bean
-  public Step step2() {
-    return stepBuilderFactory.get("step1")
-        .tasklet((contribution, chunkContext) -> {
-          System.out.println("step2 was executed");
           return RepeatStatus.FINISHED;
         }).build();
   }
