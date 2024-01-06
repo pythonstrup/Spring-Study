@@ -16,14 +16,14 @@ import org.springframework.context.annotation.Configuration;
 /**
  * 따로 JobLauncher를 실행시키지 않기 때문에 spring.batch.job.enable을 다시 true로 해줘야한다.
  */
-@Configuration
+//@Configuration
 @RequiredArgsConstructor
 public class JobExecutionConfiguration {
 
   private final JobBuilderFactory jobBuilderFactory;
   private final StepBuilderFactory stepBuilderFactory;
 
-  @Bean
+//  @Bean
   public Job BatchJob() {
     return this.jobBuilderFactory.get("Job")
         .start(step1())
@@ -31,7 +31,7 @@ public class JobExecutionConfiguration {
         .build();
   }
 
-  @Bean
+//  @Bean
   public Step step1() {
     return stepBuilderFactory.get("step1")
         .tasklet((StepContribution contribution, ChunkContext chunkContext) -> {
@@ -50,7 +50,7 @@ public class JobExecutionConfiguration {
    * step1은 이미 실행되었고 step2가 계속 실패해 다시 배치를 돌렸을 때, step1은 실행되지 않고 step2만 실행된다.
    * BATCH_STEP_EXECUTION을 살펴보자. => STEP_NAME과 상태값을 통해 실패한 Step부터 다시 실행하는 것처럼 보인다.
    */
-  @Bean
+//  @Bean
   public Step step2() {
     return stepBuilderFactory.get("step2")
         .tasklet((contribution, chunkContext) -> {

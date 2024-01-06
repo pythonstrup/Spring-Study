@@ -1,4 +1,4 @@
-package com.spring.batch.config.job;
+package com.spring.batch.config;
 
 import java.util.Date;
 import java.util.Map;
