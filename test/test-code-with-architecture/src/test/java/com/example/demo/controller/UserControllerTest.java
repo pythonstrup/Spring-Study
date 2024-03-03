@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -13,7 +12,6 @@ import com.example.demo.model.dto.UserUpdateDto;
 import com.example.demo.repository.UserEntity;
 import com.example.demo.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -24,7 +22,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -77,6 +74,16 @@ class UserControllerTest {
         .andExpect(status().isFound());
     UserEntity userEntity = userRepository.findById(2L).get();
     assertThat(userEntity.getStatus()).isEqualTo(UserStatus.ACTIVE);
+  }
+
+  @Test
+  void 사용자는_인증_코드가_일치하지_않을_경우_권한_없음_에러가_발생한다() throws Exception {
+    // given
+    // when
+    // then
+    mockMvc.perform(get("/api/users/2/verify")
+            .queryParam("certificationCode", "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaabbb"))
+        .andExpect(status().isForbidden());;
   }
 
   @Test
