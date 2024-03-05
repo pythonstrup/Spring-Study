@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.user.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
