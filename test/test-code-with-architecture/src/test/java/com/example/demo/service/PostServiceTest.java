@@ -3,10 +3,11 @@ package com.example.demo.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.dto.PostCreateDto;
-import com.example.demo.model.dto.PostUpdateDto;
-import com.example.demo.repository.PostEntity;
+import com.example.demo.common.domain.exception.ResourceNotFoundException;
+import com.example.demo.post.domain.PostCreate;
+import com.example.demo.post.domain.PostUpdate;
+import com.example.demo.post.infrastructure.PostEntity;
+import com.example.demo.post.service.PostService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -51,15 +52,15 @@ class PostServiceTest {
   }
 
   @Test
-  void PostCreateDto_를_이용해_게시글을_생성할_수_있다() {
+  void PostCreate_를_이용해_게시글을_생성할_수_있다() {
     // given
-    PostCreateDto postCreateDto = PostCreateDto.builder()
+    PostCreate postCreate = PostCreate.builder()
         .writerId(1)
         .content("foobar")
         .build();
 
     // when
-    PostEntity result = postService.create(postCreateDto);
+    PostEntity result = postService.create(postCreate);
 
     // then
     assertThat(result.getId()).isNotNull();
@@ -68,14 +69,14 @@ class PostServiceTest {
   }
 
   @Test
-  void PostUpdateDto_를_이용해_게시글을_수정할_수_있다() {
+  void PostUpdate_를_이용해_게시글을_수정할_수_있다() {
     // given
-    PostUpdateDto userUpdateDto = PostUpdateDto.builder()
+    PostUpdate postUpdate = PostUpdate.builder()
         .content("good bye")
         .build();
 
     // when
-    postService.update(1, userUpdateDto);
+    postService.update(1, postUpdate);
 
     // then
     PostEntity result = postService.getById(1);

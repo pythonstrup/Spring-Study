@@ -5,7 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.demo.model.dto.UserCreateDto;
+import com.example.demo.user.domain.UserCreate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -39,7 +39,7 @@ class UserCreateControllerTest {
   @Test
   void 사용자는_회원가입을_할_수_있고_회원가입된_사용자는_PENDING_상태이다() throws Exception {
     // given
-    UserCreateDto userCreateDto = UserCreateDto.builder()
+    UserCreate userCreate = UserCreate.builder()
         .email("coder@gmail.com")
         .nickname("coder")
         .address("Seoul")
@@ -52,7 +52,7 @@ class UserCreateControllerTest {
     mockMvc.perform(post("/api/users")
             .header("EMAIL", "bell@mobidoc.us")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(userCreateDto)))
+            .content(objectMapper.writeValueAsString(userCreate)))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.id").isNumber())
         .andExpect(jsonPath("$.email").value("coder@gmail.com"))
