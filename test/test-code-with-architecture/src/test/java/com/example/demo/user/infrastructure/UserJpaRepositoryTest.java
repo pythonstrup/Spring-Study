@@ -14,17 +14,17 @@ import org.springframework.test.context.jdbc.Sql;
 @DataJpaTest(showSql = true)
 @TestPropertySource("classpath:test-application.properties") // 테스트 프로퍼티를 이런 식으로 지정할 수 있다.
 @Sql("/sql/user-repository-test-data.sql")
-class UserRepositoryTest {
+class UserJpaRepositoryTest {
 
   @Autowired
-  private UserRepository userRepository;
+  private UserJpaRepository userJpaRepository;
 
   @Test
   void findByIdAndStatus_로_유저_데이터를_찾아올_수_있다() {
     // given
 
     // when
-    Optional<UserEntity> result = userRepository.findByIdAndStatus(1, UserStatus.ACTIVE);
+    Optional<UserEntity> result = userJpaRepository.findByIdAndStatus(1, UserStatus.ACTIVE);
 
     // then
     assertThat(result).isPresent();
@@ -35,7 +35,7 @@ class UserRepositoryTest {
     // given
 
     // when
-    Optional<UserEntity> result = userRepository.findByIdAndStatus(1, UserStatus.PENDING);
+    Optional<UserEntity> result = userJpaRepository.findByIdAndStatus(1, UserStatus.PENDING);
 
     // then
     assertThat(result).isEmpty();
@@ -46,7 +46,7 @@ class UserRepositoryTest {
     // given
 
     // when
-    Optional<UserEntity> result = userRepository.findByEmailAndStatus("bell@mobidoc.us", UserStatus.ACTIVE);
+    Optional<UserEntity> result = userJpaRepository.findByEmailAndStatus("bell@mobidoc.us", UserStatus.ACTIVE);
 
     // then
     assertThat(result).isPresent();
@@ -57,7 +57,7 @@ class UserRepositoryTest {
     // given
 
     // when
-    Optional<UserEntity> result = userRepository.findByEmailAndStatus("bell@mobidoc.us", UserStatus.PENDING);
+    Optional<UserEntity> result = userJpaRepository.findByEmailAndStatus("bell@mobidoc.us", UserStatus.PENDING);
 
     // then
     assertThat(result).isEmpty();
