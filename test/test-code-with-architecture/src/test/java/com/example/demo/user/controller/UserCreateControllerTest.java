@@ -24,7 +24,7 @@ class UserCreateControllerTest {
         .build();
 
     // when
-    ResponseEntity<UserResponse> result = testContainer.userCreateController.createUser(
+    ResponseEntity<UserResponse> result = testContainer.userCreateController.create(
         UserCreate.builder()
             .email("bell@mobidoc.us")
             .nickname("bell")

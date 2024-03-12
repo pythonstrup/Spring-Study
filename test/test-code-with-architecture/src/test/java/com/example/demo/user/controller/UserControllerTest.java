@@ -7,7 +7,6 @@ import com.example.demo.common.domain.exception.CertificationCodeNotMatchedExcep
 import com.example.demo.common.domain.exception.ResourceNotFoundException;
 import com.example.demo.mock.TestClockHolder;
 import com.example.demo.mock.TestContainer;
-import com.example.demo.user.controller.port.UserReadService;
 import com.example.demo.user.controller.response.MyProfileResponse;
 import com.example.demo.user.controller.response.UserResponse;
 import com.example.demo.user.domain.User;
@@ -39,7 +38,7 @@ class UserControllerTest {
         .build());
 
     // when
-    ResponseEntity<UserResponse> result = testContainer.userController.getUserById(1L);
+    ResponseEntity<UserResponse> result = testContainer.userController.getById(1L);
 
     // then
     Assertions.assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(200));
@@ -58,7 +57,7 @@ class UserControllerTest {
 
     // when
     // then
-    Assertions.assertThatThrownBy(() -> testContainer.userController.getUserById(1L))
+    Assertions.assertThatThrownBy(() -> testContainer.userController.getById(1L))
         .isInstanceOf(ResourceNotFoundException.class);
   }
 
@@ -173,64 +172,64 @@ class UserControllerTest {
   // 이렇게 Stub하는 코드를 선호하지 않는다고 하심
   // 애초에 어떤 하위 클래스에 어떤 메소드가 호출되면 어떤 응답을 내려줘야 한다는 것 자체가 구현이 강요되는 것이기 때문이다.
   // 책임을 위임하는 것과 거리가 멀다
-  @Test
-  void 추천하지않는방식_사용자는_특정_유저의_정보를_개인정보가_소거된_상태로_전달_받을_수_있다() {
-    // given
-    UserController userController = UserController.builder()
-        .userReadService(new UserReadService() {
-          @Override
-          public User getByEmail(String email) {
-            return null;
-          }
-
-          @Override
-          public User getById(long id) {
-            return User.builder()
-                .id(id)
-                .email("bell@mobidoc.us")
-                .nickname("bell")
-                .address("Goyang")
-                .status(UserStatus.ACTIVE)
-                .certificationCode("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
-                .lastLoginAt(1000L)
-                .build();
-          }
-        })
-        .build();
-
-    // when
-    ResponseEntity<UserResponse> result = userController.getUserById(1L);
-
-    // then
-    Assertions.assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(200));
-    assertThat(result.getBody()).isNotNull();
-    assertThat(result.getBody().getId()).isEqualTo(1L);
-    assertThat(result.getBody().getEmail()).isEqualTo("bell@mobidoc.us");
-    assertThat(result.getBody().getNickname()).isEqualTo("bell");
-    assertThat(result.getBody().getStatus()).isEqualTo(UserStatus.ACTIVE);
-    assertThat(result.getBody().getLastLoginAt()).isEqualTo(1000L);
-  }
-
-  @Test
-  void 추천하지않는방식_사용자는_존재하지_않는_유저의_아이디로_api_를_호출할_경우_404_응답을_받는다() {
-    // given
-    UserController userController = UserController.builder()
-        .userReadService(new UserReadService() {
-          @Override
-          public User getByEmail(String email) {
-            return null;
-          }
-
-          @Override
-          public User getById(long id) {
-            throw new ResourceNotFoundException("Users", id);
-          }
-        })
-        .build();
-
-    // when
-    // then
-    Assertions.assertThatThrownBy(() -> userController.getUserById(214127893L))
-        .isInstanceOf(ResourceNotFoundException.class);
-  }
+//  @Test
+//  void 추천하지않는방식_사용자는_특정_유저의_정보를_개인정보가_소거된_상태로_전달_받을_수_있다() {
+//    // given
+//    UserController userController = UserController.builder()
+//        .userReadService(new UserReadService() {
+//          @Override
+//          public User getByEmail(String email) {
+//            return null;
+//          }
+//
+//          @Override
+//          public User getById(long id) {
+//            return User.builder()
+//                .id(id)
+//                .email("bell@mobidoc.us")
+//                .nickname("bell")
+//                .address("Goyang")
+//                .status(UserStatus.ACTIVE)
+//                .certificationCode("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+//                .lastLoginAt(1000L)
+//                .build();
+//          }
+//        })
+//        .build();
+//
+//    // when
+//    ResponseEntity<UserResponse> result = userController.getUserById(1L);
+//
+//    // then
+//    Assertions.assertThat(result.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(200));
+//    assertThat(result.getBody()).isNotNull();
+//    assertThat(result.getBody().getId()).isEqualTo(1L);
+//    assertThat(result.getBody().getEmail()).isEqualTo("bell@mobidoc.us");
+//    assertThat(result.getBody().getNickname()).isEqualTo("bell");
+//    assertThat(result.getBody().getStatus()).isEqualTo(UserStatus.ACTIVE);
+//    assertThat(result.getBody().getLastLoginAt()).isEqualTo(1000L);
+//  }
+//
+//  @Test
+//  void 추천하지않는방식_사용자는_존재하지_않는_유저의_아이디로_api_를_호출할_경우_404_응답을_받는다() {
+//    // given
+//    UserController userController = UserController.builder()
+//        .userReadService(new UserReadService() {
+//          @Override
+//          public User getByEmail(String email) {
+//            return null;
+//          }
+//
+//          @Override
+//          public User getById(long id) {
+//            throw new ResourceNotFoundException("Users", id);
+//          }
+//        })
+//        .build();
+//
+//    // when
+//    // then
+//    Assertions.assertThatThrownBy(() -> userController.getUserById(214127893L))
+//        .isInstanceOf(ResourceNotFoundException.class);
+//  }
 }
