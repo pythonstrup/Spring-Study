@@ -15,9 +15,9 @@ import com.example.demo.user.domain.UserStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class PostServiceTest {
+class PostServiceImplTest {
 
-  private PostService postService;
+  private PostServiceImpl postServiceImpl;
 
   @BeforeEach
   void init() {
@@ -49,7 +49,7 @@ class PostServiceTest {
         .createdAt(1678530673958L)
         .build());
 
-    this.postService = PostService.builder()
+    this.postServiceImpl = PostServiceImpl.builder()
         .postRepository(postRepository)
         .userRepository(userRepository)
         .clockHolder(new TestClockHolder(1678530677777L))
@@ -61,7 +61,7 @@ class PostServiceTest {
     // given
 
     // when
-    Post result = postService.getById(1);
+    Post result = postServiceImpl.getById(1);
 
     // then
     assertThat(result.getContent()).isEqualTo("hello world");
@@ -77,7 +77,7 @@ class PostServiceTest {
 
     // then
     assertThatThrownBy(() -> {
-      postService.getById(512509175);
+      postServiceImpl.getById(512509175);
     }).isInstanceOf(ResourceNotFoundException.class);
   }
 
@@ -90,7 +90,7 @@ class PostServiceTest {
         .build();
 
     // when
-    Post result = postService.create(postCreate);
+    Post result = postServiceImpl.create(postCreate);
 
     // then
     assertThat(result.getId()).isNotNull();
@@ -106,10 +106,10 @@ class PostServiceTest {
         .build();
 
     // when
-    Post result = postService.update(1, postUpdate);
+    Post result = postServiceImpl.update(1, postUpdate);
 
     // then
-    Post post = postService.getById(1);
+    Post post = postServiceImpl.getById(1);
     assertThat(post.getId()).isEqualTo(1);
     assertThat(post.getContent()).isEqualTo("good bye");
     assertThat(post.getModifiedAt()).isEqualTo(1678530677777L);

@@ -7,7 +7,7 @@ import com.example.demo.common.domain.exception.ResourceNotFoundException;
 import com.example.demo.post.domain.Post;
 import com.example.demo.post.domain.PostCreate;
 import com.example.demo.post.domain.PostUpdate;
-import com.example.demo.post.service.PostService;
+import com.example.demo.post.service.PostServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,16 +22,16 @@ import org.springframework.test.context.jdbc.SqlGroup;
     @Sql(value = "/sql/post-service-test-data.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD),
     @Sql(value = "/sql/delete-all-data.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD),
 })
-class PostServiceTest {
+class PostServiceImplTest {
   @Autowired
-  private PostService postService;
+  private PostServiceImpl postServiceImpl;
 
   @Test
   void getById_로_존재하는_게시물을_조회할_수_있다() {
     // given
 
     // when
-    Post result = postService.getById(1);
+    Post result = postServiceImpl.getById(1);
 
     // then
     assertThat(result.getContent()).isEqualTo("hello world");
@@ -47,7 +47,7 @@ class PostServiceTest {
 
     // then
     assertThatThrownBy(() -> {
-      postService.getById(512509175);
+      postServiceImpl.getById(512509175);
     }).isInstanceOf(ResourceNotFoundException.class);
   }
 
@@ -60,7 +60,7 @@ class PostServiceTest {
         .build();
 
     // when
-    Post result = postService.create(postCreate);
+    Post result = postServiceImpl.create(postCreate);
 
     // then
     assertThat(result.getId()).isNotNull();
@@ -76,10 +76,10 @@ class PostServiceTest {
         .build();
 
     // when
-    Post result = postService.update(1, postUpdate);
+    Post result = postServiceImpl.update(1, postUpdate);
 
     // then
-    Post post = postService.getById(1);
+    Post post = postServiceImpl.getById(1);
     assertThat(post.getId()).isEqualTo(1);
     assertThat(post.getContent()).isEqualTo("good bye");
     assertThat(post.getModifiedAt()).isGreaterThanOrEqualTo(0);
