@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import sample.cafekiosk.unit.beverage.Americano;
 import sample.cafekiosk.unit.beverage.Latte;
@@ -21,7 +22,14 @@ class CafeKioskTest {
     System.out.println(">>> 담긴 음료: " + cafeKiosk.getBeverages().get(0).getName());
   }
 
+  // DisplayName
+  // 명사의 나열보다는 문장으로 적는 것이 좋다. "~테스트" 라고 적는 것 지양하기
+  // 테스트 행위에 대한 결과까지 기술하기
+  // 도메인 용어를 사용해 추상화된 내용을 담으면 좋다. => 메소드 자체의 관점보다 도메인 정책 관점으로
+  // 테스트의 현상을 중점으로 기술하지 말 것
   @Test
+//  @DisplayName("음료 1개 추가 테스트")
+  @DisplayName("음료 1개를 추가하면 주문 목록에 담긴다")
   void add() {
     CafeKiosk cafeKiosk = new CafeKiosk();
     cafeKiosk.add(new Americano());
