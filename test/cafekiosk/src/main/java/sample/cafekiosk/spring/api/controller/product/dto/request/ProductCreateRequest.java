@@ -3,7 +3,7 @@ package sample.cafekiosk.spring.api.controller.product.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import sample.cafekiosk.spring.domain.product.Product;
+import sample.cafekiosk.spring.api.service.product.request.ProductCreateServiceRequest;
 import sample.cafekiosk.spring.domain.product.ProductSellingType;
 import sample.cafekiosk.spring.domain.product.ProductType;
 
@@ -14,13 +14,8 @@ public record ProductCreateRequest(
     @Positive(message = "상품 가격은 양수여야 합니다.") int price
 ) {
 
-  public Product toEntity(String nextProductNumber) {
-    return Product.builder()
-        .productNumber(nextProductNumber)
-        .type(type)
-        .sellingType(sellingType)
-        .name(name)
-        .price(price)
-        .build();
+  public ProductCreateServiceRequest toService() {
+    return new ProductCreateServiceRequest(
+        this.type, this.sellingType, this.name, this.price);
   }
 }
