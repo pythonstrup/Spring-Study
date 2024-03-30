@@ -48,9 +48,17 @@ class OrderServiceTest {
 
   @AfterEach
   void tearDown() {
+    // 데이터를 지울 때, 순서도 굉장히 중요하다. => 외래키 제약 조건 때문
     orderProductRepository.deleteAllInBatch();
     productRepository.deleteAllInBatch();
     orderRepository.deleteAllInBatch();
+
+    // findAll()을 하고 하나씩 delete 하기 때문에 속도가 느리다.
+    // for (T element: findAll()) { delete(element); } 로직으로 실행되기 때문!
+//    orderProductRepository.deleteAll();
+//    productRepository.deleteAll();
+//    orderRepository.deleteAll();
+
     stockRepository.deleteAllInBatch();
   }
 
