@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import sample.cafekiosk.spring.IntegrationTestSupport;
 import sample.cafekiosk.spring.api.service.product.request.ProductCreateServiceRequest;
 import sample.cafekiosk.spring.api.service.product.response.ProductResponse;
 import sample.cafekiosk.spring.domain.product.Product;
@@ -21,10 +22,8 @@ import sample.cafekiosk.spring.domain.product.ProductRepository;
 import sample.cafekiosk.spring.domain.product.ProductSellingType;
 import sample.cafekiosk.spring.domain.product.ProductType;
 
-@SpringBootTest
 //@Transactional
-@ActiveProfiles("test")
-class ProductServiceTest {
+class ProductServiceTest extends IntegrationTestSupport {
 
   @Autowired
   private ProductService productService;
@@ -57,7 +56,8 @@ class ProductServiceTest {
         "001", HANDMADE, SELLING, "아메리카노", 4000);
     productRepository.saveAll(List.of(product1));
 
-    ProductCreateServiceRequest request = new ProductCreateServiceRequest(HANDMADE, SELLING, "카푸치노", 5000);
+    ProductCreateServiceRequest request = new ProductCreateServiceRequest(HANDMADE, SELLING, "카푸치노",
+        5000);
 
     // when
     ProductResponse productResponse = productService.createProduct(request);
@@ -79,7 +79,8 @@ class ProductServiceTest {
   @DisplayName("상품이 하나도 없는 경우 신규 상품을 등록하면 상품번호는 가장 001이다.")
   public void createProductWhenProductIsEmpty() {
     // given
-    ProductCreateServiceRequest request = new ProductCreateServiceRequest(HANDMADE, SELLING, "카푸치노", 5000);
+    ProductCreateServiceRequest request = new ProductCreateServiceRequest(HANDMADE, SELLING, "카푸치노",
+        5000);
 
     // when
     ProductResponse productResponse = productService.createProduct(request);

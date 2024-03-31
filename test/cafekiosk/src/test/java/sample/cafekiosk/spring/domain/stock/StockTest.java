@@ -56,19 +56,6 @@ class StockTest {
   }
 
   @TestFactory
-  @DisplayName("")
-  Collection<DynamicTest> dynamicTest() {
-    return List.of(
-        DynamicTest.dynamicTest("", () -> {
-
-        }),
-        DynamicTest.dynamicTest("", () -> {
-
-        })
-    );
-  }
-
-  @TestFactory
   @DisplayName("재고 차감 시나리오")
   Collection<DynamicTest> stockDeductionDynamicTest() {
     // given

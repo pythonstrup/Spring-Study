@@ -8,9 +8,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
+import sample.cafekiosk.spring.IntegrationTestSupport;
 
-@DataJpaTest
-class StockRepositoryTest {
+// 테스트를 하나로 통합하기 위해 @SpringBootTest를 많이 사용하는 편이다.
+//@ActiveProfiles("test")
+//@DataJpaTest
+@Transactional
+class StockRepositoryTest extends IntegrationTestSupport {
 
   @Autowired
   private StockRepository stockRepository;
