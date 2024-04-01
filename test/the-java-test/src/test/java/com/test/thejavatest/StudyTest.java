@@ -8,8 +8,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
+// 메소드 이름 표기 전략을 설정할 수 있음 => 그러나 그냥 @DisplayName을 사용하는 것을 권장
+// @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class StudyTest {
 
   @BeforeAll
@@ -33,7 +37,8 @@ class StudyTest {
   }
 
   @Test
-  void create1() {
+  @DisplayName("스터디 만들기 \uD83D\uDE31")
+  void create_new_study() {
     Study study = new Study();
     assertNotNull(study);
     System.out.println("create1");
