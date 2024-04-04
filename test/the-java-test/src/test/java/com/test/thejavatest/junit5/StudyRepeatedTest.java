@@ -1,7 +1,8 @@
-package com.test.thejavatest;
+package com.test.thejavatest.junit5;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.test.thejavatest.Study;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;

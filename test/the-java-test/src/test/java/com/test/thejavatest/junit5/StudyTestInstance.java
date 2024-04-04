@@ -1,4 +1,4 @@
-package com.test.thejavatest;
+package com.test.thejavatest.junit5;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,8 @@
-package com.test.thejavatest;
+package com.test.thejavatest.junit5;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.test.thejavatest.Study;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;

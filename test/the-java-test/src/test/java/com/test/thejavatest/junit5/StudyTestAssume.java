@@ -1,4 +1,4 @@
-package com.test.thejavatest;
+package com.test.thejavatest.junit5;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -8,6 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.junit.jupiter.api.Assumptions.assumingThat;
 
+import com.test.thejavatest.Study;
+import com.test.thejavatest.StudyStatus;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
@@ -27,7 +30,7 @@ class StudyTestAssume {
     Study study = new Study(10);
     assertAll(
         () -> assertNotNull(study),
-        () -> assertEquals(StudyStatus.DRAFT, study.getStatus(), () -> "스터디를 처음 만들면 상태값이 DRAFT여야 한다."),
+        () -> Assertions.assertEquals(StudyStatus.DRAFT, study.getStatus(), () -> "스터디를 처음 만들면 상태값이 DRAFT여야 한다."),
         () -> assertTrue(study.getLimit() > 0, () -> "스터디의 최대 참석 가능 인원은 0보다 커야 한다.")
     );
   }
