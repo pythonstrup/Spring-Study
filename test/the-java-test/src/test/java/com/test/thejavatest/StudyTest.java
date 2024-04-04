@@ -40,4 +40,9 @@ class StudyTest {
     String message = exception.getMessage();
     assertEquals("limit은 0보다 커야 한다.", message);
   }
+
+  @Test
+  void create_display_strategy() {
+    System.out.println("oh");
+  }
 }
