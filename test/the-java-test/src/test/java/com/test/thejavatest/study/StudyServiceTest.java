@@ -20,6 +20,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.BDDMockito;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -152,6 +153,35 @@ class StudyServiceTest {
     InOrder inOrder = inOrder(memberService);
     inOrder.verify(memberService).notify(study);
     inOrder.verify(memberService).notify(member);
+  }
+
+  @Test
+  @DisplayName("")
+  void BDDMockito() {
+    // given
+    StudyService studyService = new StudyService(memberService, studyRepository);
+    Study study = new Study(10, "test");
+
+    Member member = new Member();
+    member.setId(1L);
+    member.setEmail("bell@mobidoc.us");
+    BDDMockito.given(memberService.findById(1L)).willReturn(Optional.of(member));
+    BDDMockito.given(studyRepository.save(study)).willReturn(study);
+
+    // when
+    Study newStudy = studyService.createNewStudy(1L, study);
+
+    // then
+    assertAll(
+        () -> assertThat(study).isNotNull(),
+        () -> assertThat(study.getName()).isEqualTo("test"),
+        () -> assertThat(study.getLimit()).isEqualTo(10),
+        () -> assertThat(study.getStatus()).isEqualTo(StudyStatus.DRAFT)
+    );
+
+    BDDMockito.then(memberService).should(times(1)).notify(study);
+    BDDMockito.then(memberService).should(times(1)).notify(member);
+    BDDMockito.then(memberService).shouldHaveNoInteractions();
   }
 
   // 아래와 같이 파라미터로 넣어줘도 된다.
