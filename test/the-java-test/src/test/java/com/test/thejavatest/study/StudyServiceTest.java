@@ -2,8 +2,14 @@ package com.test.thejavatest.study;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.test.thejavatest.domain.Member;
@@ -11,8 +17,10 @@ import com.test.thejavatest.domain.Study;
 import com.test.thejavatest.member.MemberService;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -85,6 +93,65 @@ class StudyServiceTest {
 
     Optional<Member> member3 = memberService.findById(1L);
     assertThat(member3).isEmpty();
+  }
+
+  @Test
+  @DisplayName("")
+  void practice() {
+    // given
+    StudyService studyService = new StudyService(memberService, studyRepository);
+    Study study = new Study(10, "test");
+
+    Member member = new Member();
+    member.setId(1L);
+    member.setEmail("bell@mobidoc.us");
+    when(memberService.findById(1L)).thenReturn(Optional.of(member));
+    when(studyRepository.save(study)).thenReturn(study);
+
+    // when
+    Study newStudy = studyService.createNewStudy(1L, study);
+
+    // then
+    assertAll(
+        () -> assertThat(study).isNotNull(),
+        () -> assertThat(study.getName()).isEqualTo("test"),
+        () -> assertThat(study.getLimit()).isEqualTo(10),
+        () -> assertThat(study.getStatus()).isEqualTo(StudyStatus.DRAFT)
+    );
+  }
+
+  @Test
+  @DisplayName("")
+  void notifyStudy() {
+    // given
+    StudyService studyService = new StudyService(memberService, studyRepository);
+    Study study = new Study(10, "test");
+
+    Member member = new Member();
+    member.setId(1L);
+    member.setEmail("bell@mobidoc.us");
+    when(memberService.findById(1L)).thenReturn(Optional.of(member));
+    when(studyRepository.save(study)).thenReturn(study);
+
+    // when
+    Study newStudy = studyService.createNewStudy(1L, study);
+
+    // then
+    assertAll(
+        () -> assertThat(study).isNotNull(),
+        () -> assertThat(study.getName()).isEqualTo("test"),
+        () -> assertThat(study.getLimit()).isEqualTo(10),
+        () -> assertThat(study.getStatus()).isEqualTo(StudyStatus.DRAFT)
+    );
+
+    verify(memberService, times(1)).notify(study);
+//    verifyNoMoreInteractions(memberService);
+    verify(memberService, times(1)).notify(member);
+    verify(memberService, never()).validate(anyLong());
+
+    InOrder inOrder = inOrder(memberService);
+    inOrder.verify(memberService).notify(study);
+    inOrder.verify(memberService).notify(member);
   }
 
   // 아래와 같이 파라미터로 넣어줘도 된다.
