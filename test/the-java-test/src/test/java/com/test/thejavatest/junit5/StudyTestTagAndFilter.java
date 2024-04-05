@@ -2,7 +2,7 @@ package com.test.thejavatest.junit5;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.test.thejavatest.Study;
+import com.test.thejavatest.domain.Study;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

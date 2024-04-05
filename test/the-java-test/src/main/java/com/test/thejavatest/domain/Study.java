@@ -1,4 +1,6 @@
-package com.test.thejavatest;
+package com.test.thejavatest.domain;
+
+import com.test.thejavatest.study.StudyStatus;
 
 public class Study {
 
@@ -41,5 +43,9 @@ public class Study {
         ", limit=" + limit +
         ", name='" + name + '\'' +
         '}';
+  }
+
+  public void setOwner(Member member) {
+
   }
 }

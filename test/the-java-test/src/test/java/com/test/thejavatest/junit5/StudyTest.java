@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.test.thejavatest.Study;
-import com.test.thejavatest.StudyStatus;
+import com.test.thejavatest.domain.Study;
+import com.test.thejavatest.study.StudyStatus;
 import java.time.Duration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
