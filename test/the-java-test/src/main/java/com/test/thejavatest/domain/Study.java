@@ -1,12 +1,16 @@
 package com.test.thejavatest.domain;
 
 import com.test.thejavatest.study.StudyStatus;
+import jakarta.persistence.GeneratedValue;
+import org.springframework.data.annotation.Id;
 
 public class Study {
 
+  @Id @GeneratedValue
+  private Long id;
   private StudyStatus status = StudyStatus.DRAFT;
-
   private int limit;
+  private Long ownerId;
 
   private String name;
 
@@ -46,6 +50,6 @@ public class Study {
   }
 
   public void setOwner(Member member) {
-
+    this.ownerId = member.getId();
   }
 }
