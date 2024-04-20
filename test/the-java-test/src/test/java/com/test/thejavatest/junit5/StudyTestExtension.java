@@ -22,6 +22,6 @@ class StudyTestExtension {
   void create_study() throws InterruptedException {
     Thread.sleep(1005L);
     Study study = new Study(10);
-    assertThat(study.getLimit()).isGreaterThan(0);
+    assertThat(study.getPeopleLimit()).isGreaterThan(0);
   }
 }

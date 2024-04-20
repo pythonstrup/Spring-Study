@@ -28,6 +28,16 @@ dependencies {
 
     // h2
     runtimeOnly 'com.h2database:h2'
+
+    // postgre
+    implementation 'org.postgresql:postgresql:42.1.4'
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // testContainers
+    testImplementation "org.testcontainers:testcontainers:1.19.7"
+    testImplementation "org.testcontainers:postgresql:1.19.7"
+
+
 }
 
 tasks.named('test') {

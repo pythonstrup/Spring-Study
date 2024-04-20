@@ -1,30 +1,33 @@
 package com.test.thejavatest.domain;
 
 import com.test.thejavatest.study.StudyStatus;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
 
+@Entity
 public class Study {
 
-  @Id @GeneratedValue
+  @Id
+  @GeneratedValue
   private Long id;
   private StudyStatus status = StudyStatus.DRAFT;
-  private int limit;
+  private int peopleLimit;
   private Long ownerId;
 
   private String name;
 
   public Study() {}
 
-  public Study(int limit) {
-    if (limit <= 0) {
+  public Study(int peopleLimit) {
+    if (peopleLimit <= 0) {
       throw new IllegalArgumentException("limit은 0보다 커야 한다.");
     }
-    this.limit = limit;
+    this.peopleLimit = peopleLimit;
   }
 
-  public Study(int limit, String name) {
-    this.limit = limit;
+  public Study(int peopleLimit, String name) {
+    this.peopleLimit = peopleLimit;
     this.name = name;
   }
 
@@ -32,19 +35,23 @@ public class Study {
     return status;
   }
 
-  public int getLimit() {
-    return limit;
+  public int getPeopleLimit() {
+    return peopleLimit;
   }
 
   public String getName() {
     return name;
   }
 
+  public Long getOwnerId() {
+    return ownerId;
+  }
+
   @Override
   public String toString() {
     return "Study{" +
         "status=" + status +
-        ", limit=" + limit +
+        ", limit=" + peopleLimit +
         ", name='" + name + '\'' +
         '}';
   }

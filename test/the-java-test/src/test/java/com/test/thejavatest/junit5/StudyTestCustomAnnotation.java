@@ -13,13 +13,13 @@ class StudyTestCustomAnnotation {
   @DisplayName("스터디 만들기 \uD83D\uDE31")
   void create_new_study() {
     Study study = new Study(10);
-    assertThat(study.getLimit()).isGreaterThan(0);
+    assertThat(study.getPeopleLimit()).isGreaterThan(0);
   }
 
   @SlowTest
   @DisplayName("스터디 만들기 \uD83D\uDE31")
   void create_new_study_again() {
     Study study = new Study(10);
-    assertThat(study.getLimit()).isGreaterThan(0);
+    assertThat(study.getPeopleLimit()).isGreaterThan(0);
   }
 }

@@ -52,7 +52,7 @@ class StudyRepeatedTest {
   @ParameterizedTest(name = "{index} {displayName} message={0}")
   @ValueSource(ints = {10, 20, 40})
   void parameterizedTestValueSourceInteger(@ConvertWith(StudyConverter.class) Study study) {
-    System.out.println(study.getLimit());
+    System.out.println(study.getPeopleLimit());
   }
 
   static class StudyConverter extends SimpleArgumentConverter {

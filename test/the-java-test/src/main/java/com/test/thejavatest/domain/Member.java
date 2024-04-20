@@ -1,11 +1,12 @@
 package com.test.thejavatest.domain;
 
 import jakarta.persistence.GeneratedValue;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
 
 public class Member {
 
-  @Id @GeneratedValue
+  @Id
+  @GeneratedValue
   private Long id;
   private String email;
 

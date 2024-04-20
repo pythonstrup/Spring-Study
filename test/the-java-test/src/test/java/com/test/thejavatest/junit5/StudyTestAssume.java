@@ -30,7 +30,7 @@ class StudyTestAssume {
     assertAll(
         () -> assertNotNull(study),
         () -> Assertions.assertEquals(StudyStatus.DRAFT, study.getStatus(), () -> "스터디를 처음 만들면 상태값이 DRAFT여야 한다."),
-        () -> assertTrue(study.getLimit() > 0, () -> "스터디의 최대 참석 가능 인원은 0보다 커야 한다.")
+        () -> assertTrue(study.getPeopleLimit() > 0, () -> "스터디의 최대 참석 가능 인원은 0보다 커야 한다.")
     );
   }
 
@@ -42,12 +42,12 @@ class StudyTestAssume {
     assumingThat("LOCAL".equalsIgnoreCase(testEnv), () -> {
       System.out.println("local");
       Study study = new Study(10);
-      assertThat(study.getLimit()).isGreaterThan(0);
+      assertThat(study.getPeopleLimit()).isGreaterThan(0);
     });
     assumingThat("bell".equalsIgnoreCase(testEnv), () -> {
       System.out.println("bell");
       Study study = new Study(10);
-      assertThat(study.getLimit()).isGreaterThan(0);
+      assertThat(study.getPeopleLimit()).isGreaterThan(0);
     });
   }
 
@@ -56,7 +56,7 @@ class StudyTestAssume {
   @EnabledOnOs({OS.MAC, OS.LINUX})
   void create_new_study3() {
     Study study = new Study(10);
-    assertThat(study.getLimit()).isGreaterThan(0);
+    assertThat(study.getPeopleLimit()).isGreaterThan(0);
   }
 
   @Test
@@ -64,7 +64,7 @@ class StudyTestAssume {
   @EnabledOnJre({JRE.JAVA_8, JRE.JAVA_9, JRE.JAVA_10, JRE.JAVA_11, JRE.JAVA_17})
   void create_new_study4() {
     Study study = new Study(10);
-    assertThat(study.getLimit()).isGreaterThan(0);
+    assertThat(study.getPeopleLimit()).isGreaterThan(0);
   }
 
   @Test
@@ -72,7 +72,7 @@ class StudyTestAssume {
   @EnabledOnJre(JRE.OTHER)
   void create_new_study5() {
     Study study = new Study(10);
-    assertThat(study.getLimit()).isGreaterThan(0);
+    assertThat(study.getPeopleLimit()).isGreaterThan(0);
   }
 
   @Test
@@ -80,6 +80,6 @@ class StudyTestAssume {
   @EnabledIfEnvironmentVariable(named = "TEST_ENV", matches = "LOCAL")
   void create_new_study6() {
     Study study = new Study(10);
-    assertThat(study.getLimit()).isGreaterThan(0);
+    assertThat(study.getPeopleLimit()).isGreaterThan(0);
   }
 }

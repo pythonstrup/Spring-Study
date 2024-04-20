@@ -9,14 +9,12 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.test.thejavatest.domain.Member;
 import com.test.thejavatest.domain.Study;
 import com.test.thejavatest.member.MemberService;
 import java.util.Optional;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -116,7 +114,7 @@ class StudyServiceTest {
     assertAll(
         () -> assertThat(study).isNotNull(),
         () -> assertThat(study.getName()).isEqualTo("test"),
-        () -> assertThat(study.getLimit()).isEqualTo(10),
+        () -> assertThat(study.getPeopleLimit()).isEqualTo(10),
         () -> assertThat(study.getStatus()).isEqualTo(StudyStatus.DRAFT)
     );
   }
@@ -141,7 +139,7 @@ class StudyServiceTest {
     assertAll(
         () -> assertThat(study).isNotNull(),
         () -> assertThat(study.getName()).isEqualTo("test"),
-        () -> assertThat(study.getLimit()).isEqualTo(10),
+        () -> assertThat(study.getPeopleLimit()).isEqualTo(10),
         () -> assertThat(study.getStatus()).isEqualTo(StudyStatus.DRAFT)
     );
 
@@ -175,7 +173,7 @@ class StudyServiceTest {
     assertAll(
         () -> assertThat(study).isNotNull(),
         () -> assertThat(study.getName()).isEqualTo("test"),
-        () -> assertThat(study.getLimit()).isEqualTo(10),
+        () -> assertThat(study.getPeopleLimit()).isEqualTo(10),
         () -> assertThat(study.getStatus()).isEqualTo(StudyStatus.DRAFT)
     );
 

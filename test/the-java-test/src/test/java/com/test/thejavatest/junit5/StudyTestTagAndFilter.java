@@ -14,7 +14,7 @@ class StudyTestTagAndFilter {
   @Tag("fast")
   void create_new_study() {
     Study study = new Study(10);
-    assertThat(study.getLimit()).isGreaterThan(0);
+    assertThat(study.getPeopleLimit()).isGreaterThan(0);
   }
 
   @Test
@@ -22,6 +22,6 @@ class StudyTestTagAndFilter {
   @Tag("slow")
   void create_new_study_again() {
     Study study = new Study(10);
-    assertThat(study.getLimit()).isGreaterThan(0);
+    assertThat(study.getPeopleLimit()).isGreaterThan(0);
   }
 }
