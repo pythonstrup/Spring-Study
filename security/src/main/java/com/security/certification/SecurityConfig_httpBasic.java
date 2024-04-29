@@ -1,7 +1,9 @@
-package com.security.config;
+package com.security.certification;
 
+import com.security.certification.handler.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -11,28 +13,15 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public class SecurityConfig_httpBasic {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-        .formLogin(form -> form
-//            .loginPage("/loginPage")
-            .loginProcessingUrl("/loginProc")
-            .defaultSuccessUrl("/", true)
-            .failureUrl("/failed")
-            .usernameParameter("userId")
-            .passwordParameter("passwd")
-            .successHandler((request, response, authentication) -> {
-              System.out.println("authentication: " + authentication);
-              response.sendRedirect("/home");
-            })
-            .failureHandler((request, response, exception) -> {
-              System.out.println("exception = " + exception);
-              response.sendRedirect("/login");
-            })
-            .permitAll());
+//        .httpBasic(Customizer.withDefaults());
+        .httpBasic(basic -> basic
+            .authenticationEntryPoint(new CustomAuthenticationEntryPoint()));
     return http.build();
   }
 
